@@ -232,9 +232,29 @@ const ANIMAL: CategoryCopy = {
 `QuestionCard.vue` 的 `aspectClass` 处补充对应比例类，再在 `GameView.vue` 中把两张卡片的
 `aspect="video"` 改为新比例键名即可。
 
+### 规则七：图片体积优化（WebP）
+
+素材原图合计 38 MB（`ai/` 下多为 PNG 存照片，单张最大 3 MB），而 10 题一轮要在手机上加载 20 张，
+弱网下每轮都要白等好几秒。现已统一转成 WebP，整包降到 **4.8 MB（省 88%）**：
+
+```bash
+npm run optimize:images:dry   # 试运行：只报告体积与尺寸，不改动任何文件
+npm run optimize:images       # 实际转换，成功后删除原图（原图仍在 git 历史里，可随时找回）
+```
+
+- 参数集中在 `scripts/optimize-images.mjs`：题目素材最大宽 1280px、质量 82；
+  表情帧最大宽 640px、质量 90（保留透明通道）；
+- ⚠️ **AI 图与真实照片必须用完全相同的参数**：否则压缩痕迹本身就会变成
+  「哪张是 AI」的线索，直接破坏题目公平性（脚本里这两组的参数刻意保持一致）；
+- 脚本结束会自检「同一素材两种扩展名并存」—— `questions.ts` 会把它判为重名并少出一张图；
+- 换素材、或重跑 `scripts/crop-mascot.ps1` 裁出新表情帧（PNG）之后，都要再执行一次
+  `npm run optimize:images`，因为 `MascotPet.vue` 的 glob 匹配的是 `frame-*.webp`；
+- 游戏页还会**预取下一题的两张图**（`GameView.vue`：low 优先级、只预热相邻一题），
+  切到下一题时不会再出现「图片还在加载」的空窗。
+
 ### 招新二维码
 
-二维码图片放在 `public/recruit-qr.png`（当前已接入，源图来自 `src/assets/images/Link/linkQQ.png`），
+二维码图片放在 `public/recruit-qr.png`（当前已接入），
 `RecruitView.vue` 用 `import.meta.env.BASE_URL` 拼路径引用，所以子路径部署（比如 GitHub Pages）
 也不会 404。**换二维码只要替换 `public/recruit-qr.png` 这一个文件，代码不用动。**
 
@@ -246,7 +266,8 @@ const ANIMAL: CategoryCopy = {
 ## ⚙️ 自定义
 
 - 吉祥物：`src/components/MascotPet.vue`（12 帧表情来自 `src/assets/images/pet` 精灵图，
-  由 `scripts/crop-mascot.ps1` 切出，更新表情图后重跑该脚本即可；各调用点用 `emotion` 属性选帧）；
+  由 `scripts/crop-mascot.ps1` 切出，更新表情图后重跑该脚本、再跑一次
+  `npm run optimize:images` 转成 WebP；各调用点用 `emotion` 属性选帧）；
 - 主题色：整体采用与研小鸿表情包相容的**暖橙糖果体系**（主色 `#ff8a1c` 围巾橙 + 暖可可夜底 + 奶油点缀，
   冷色仅作科技点缀）。设计令牌集中在 `tailwind.config.js` 与 `src/assets/main.css`（改这里即可全站换肤）；
 - 社团名称：首页与招新页文案内直接修改即可。

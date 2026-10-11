@@ -9,6 +9,8 @@
     "typecheck": "vue-tsc --noEmit",
     "build": "npm run typecheck && vite build",
     "check:rounds": "node --no-warnings --experimental-strip-types scripts/check-rounds.ts",
+    "optimize:images": "node scripts/optimize-images.mjs --write",
+    "optimize:images:dry": "node scripts/optimize-images.mjs",
     "preview": "vite preview",
     "fetch:photos": "node scripts/fetch-images.mjs"
   },
@@ -23,6 +25,7 @@
     "@vitejs/plugin-vue": "^5.2.1",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
+    "sharp": "^0.35.5",
     "tailwindcss": "^3.4.17",
     "typescript": "~5.7.2",
     "vite": "^6.0.7",

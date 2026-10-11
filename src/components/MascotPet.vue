@@ -45,8 +45,13 @@ export function mascotFrameForScore(correct: number): number {
  */
 import { computed } from 'vue'
 
-/** 帧资源：运行时按需加载，只有用到的表情才会被浏览器下载 */
-const frameModules = import.meta.glob<string>('/src/assets/images/pet/frames/frame-*.png', {
+/**
+ * 帧资源：运行时按需加载，只有用到的表情才会被浏览器下载。
+ *
+ * ⚠️ 帧文件已统一压成 WebP（见 scripts/optimize-images.mjs）；
+ *    若重跑 scripts/crop-mascot.ps1 裁出新帧（PNG），需再执行一次 `npm run optimize:images`。
+ */
+const frameModules = import.meta.glob<string>('/src/assets/images/pet/frames/frame-*.webp', {
   eager: true,
   query: '?url',
   import: 'default',

@@ -9,7 +9,7 @@
  *
  * 安全措施：确认后立即锁定，防连点/双卡同选；本题答完前不可再次作答。
  */
-import { computed, onBeforeUnmount, ref } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { Home, ScanSearch, ShieldCheck } from 'lucide-vue-next'
 import { useGameStore } from '@/stores/game'
@@ -41,6 +41,43 @@ const gain = ref<{ key: number; gained: number; bonus: number } | null>(null)
 
 const question = computed(() => game.currentQuestion)
 
+/* ---------------- 下一题图片预热 ---------------- */
+/**
+ * 预取下一题的 2 张图。
+ * 素材压成 WebP 后单张只有几十~一百多 KB，趁当前题思考的空档提前下载，
+ * 切到下一题就不会再出现「图片还在加载」的空窗。
+ *
+ * 只预热相邻一题，避免一次拉一堆图挤占带宽；请求标记为 low 优先级，
+ * 不和当前题正在显示的图抢带宽。
+ */
+const prefetched = new Set<string>()
+let prefetchTimer: number | undefined
+
+function prefetchImage(url: string | undefined) {
+  if (!url || prefetched.has(url)) return
+  prefetched.add(url)
+  const image = new Image()
+  image.decoding = 'async'
+  // 用 setAttribute 而非属性赋值：部分 TS DOM 版本还没有 fetchPriority 类型
+  image.setAttribute('fetchpriority', 'low')
+  image.src = url
+}
+
+watch(
+  () => game.currentIndex,
+  () => {
+    const next = game.questions[game.currentIndex + 1]
+    if (!next) return
+    if (prefetchTimer) window.clearTimeout(prefetchTimer)
+    // 稍等一下：先让当前题正在显示的图拿到带宽
+    prefetchTimer = window.setTimeout(() => {
+      prefetchImage(next.imageA.url)
+      prefetchImage(next.imageB.url)
+    }, 300)
+  },
+  { immediate: true },
+)
+
 let suspenseTimer: number | undefined
 let gainTimer: number | undefined
 
@@ -51,7 +88,10 @@ function clearTimers() {
   gainTimer = undefined
 }
 
-onBeforeUnmount(clearTimers)
+onBeforeUnmount(() => {
+  clearTimers()
+  if (prefetchTimer) window.clearTimeout(prefetchTimer)
+})
 
 /* ---------------- 研小鸿提示文案 ---------------- */
 const IDLE_TIPS: ReadonlyArray<string> = [
