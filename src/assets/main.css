@@ -1,0 +1,165 @@
+/* ============ AI 鉴定师 · 全局样式 ============ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    scrollbar-color: rgba(255, 140, 50, 0.5) transparent;
+  }
+
+  body {
+    @apply bg-night-deep text-slate-100 antialiased;
+    font-family:
+      'PingFang SC',
+      'HarmonyOS Sans SC',
+      'Microsoft YaHei',
+      system-ui,
+      -apple-system,
+      'Segoe UI',
+      Roboto,
+      sans-serif;
+    overflow-x: hidden;
+    /* 手机上避免滚动/下拉时露出默认底色 */
+    overscroll-behavior-y: none;
+  }
+
+  ::selection {
+    background: rgba(255, 150, 60, 0.45);
+    color: #fff;
+  }
+
+  /* 纤细的装饰性滚动条（桌面端） */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 140, 50, 0.5);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  img {
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+}
+
+@layer components {
+  /* 页面底色渐变（纯暖色调：可可红棕 + 橙/玫瑰光晕，无冷色避免发绿） */
+  .bg-stage {
+    background:
+      radial-gradient(62% 46% at 12% -4%, rgba(255, 140, 45, 0.24), transparent 62%),
+      radial-gradient(50% 42% at 90% 14%, rgba(255, 120, 40, 0.12), transparent 60%),
+      radial-gradient(58% 46% at 72% 102%, rgba(255, 96, 120, 0.15), transparent 62%),
+      linear-gradient(180deg, #331d10 0%, #26150c 52%, #1c0f08 100%);
+  }
+
+  /* 梦幻渐变文字（暖橙糖果流光，对应表情包配色） */
+  .text-candy {
+    background: linear-gradient(
+      100deg,
+      #ffd96b 0%,
+      #ffab3d 20%,
+      #ff8a1c 42%,
+      #ff5c8a 66%,
+      #ffc46b 86%,
+      #ffd96b 100%
+    );
+    background-size: 240% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gradient-x 5s linear infinite;
+  }
+
+  /* 毛玻璃卡片 */
+  .glass {
+    @apply rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md;
+  }
+
+  /* 答案结算框：焦糖暖渐变（顶部琥珀辉光 + 深可可收底） */
+  .panel-caramel {
+    background:
+      radial-gradient(120% 70% at 50% -12%, rgba(255, 176, 90, 0.22), transparent 62%),
+      linear-gradient(172deg, #5c3821 0%, #42260f 50%, #2b1609 100%);
+  }
+
+  /* 主 CTA 按钮：暖橙糖果渐变（表情包同款配色）+ 深棕文字 */
+  .btn-primary {
+    @apply relative flex items-center justify-center gap-2 rounded-2xl px-6 py-3.5 text-base font-bold text-[#3d1d05] transition-all duration-200 active:scale-95;
+    background-image: linear-gradient(115deg, #ffc14d 0%, #ff8a1c 38%, #ff5c46 74%, #ffb020 100%);
+    background-size: 160% auto;
+    box-shadow:
+      0 12px 30px -10px rgba(255, 120, 30, 0.6),
+      inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  }
+  .btn-primary:hover {
+    background-position: right center;
+  }
+  .btn-primary:disabled {
+    @apply cursor-not-allowed opacity-60;
+  }
+
+  /* 次级按钮：玻璃描边 */
+  .btn-ghost {
+    @apply flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/5 px-6 py-3.5 text-base font-semibold text-slate-100 backdrop-blur transition-all duration-200 hover:bg-white/10 active:scale-95;
+  }
+
+  /* 底部安全区（刘海屏） */
+  .pb-safe {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+}
+
+/* ============ 路由页面切换动画 ============ */
+.page-enter-active,
+.page-leave-active {
+  transition:
+    opacity 0.28s ease,
+    transform 0.28s ease;
+}
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(14px) scale(0.99);
+}
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.995);
+}
+
+/* 弹窗过渡 */
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.28s ease;
+}
+.modal-enter-active .modal-panel,
+.modal-leave-active .modal-panel {
+  transition:
+    opacity 0.28s ease,
+    transform 0.32s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+.modal-enter-from .modal-panel,
+.modal-leave-to .modal-panel {
+  opacity: 0;
+  transform: translateY(36px) scale(0.94);
+}
+
+/* ============ 无障碍：跟随系统减弱动效 ============ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

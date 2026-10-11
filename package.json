@@ -1,0 +1,31 @@
+{
+  "name": "ai-detective",
+  "private": true,
+  "version": "1.0.0",
+  "description": "AI鉴定师 · AI DETECTIVE —— 校园招新互动小游戏（重庆外语外事学院 人工智能学生研讨与践习社）",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "typecheck": "vue-tsc --noEmit",
+    "build": "npm run typecheck && vite build",
+    "check:rounds": "node --no-warnings --experimental-strip-types scripts/check-rounds.ts",
+    "preview": "vite preview",
+    "fetch:photos": "node scripts/fetch-images.mjs"
+  },
+  "dependencies": {
+    "lucide-vue-next": "^0.468.0",
+    "pinia": "^3.0.1",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "typescript": "~5.7.2",
+    "vite": "^6.0.7",
+    "vue-tsc": "^2.2.0"
+  }
+}

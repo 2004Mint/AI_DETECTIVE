@@ -1,0 +1,79 @@
+# 构建并发布到 GitHub Pages
+#
+# 触发：push 到 main 分支，或手动在 Actions 页面点 “Run workflow”。
+#
+# ⚠️ 首次使用前需要在仓库里做一次设置：
+#    Settings → Pages → Build and deployment → Source 选 “GitHub Actions”
+#    （选完不用挑分支，本工作流用 actions/deploy-pages 直接发布 dist 产物）
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# GITHUB_TOKEN 的最小权限：读代码 + 写 Pages + 用 OIDC 换部署令牌
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 只保留最新一次部署；正在跑的那次不打断（等它发完再发新的）
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: 构建
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # ⚠️ 必须装 devDependencies：package.json 的 build 脚本会先跑 vue-tsc 类型检查
+      - name: 安装依赖
+        run: npm ci
+
+      # base 自动推导，仓库改名也不用动代码：
+      #   普通仓库        → /<仓库名>/
+      #   <用户名>.github.io → /（根路径）
+      - name: 计算资源基础路径 base
+        id: base
+        run: |
+          if [ "${{ github.event.repository.name }}" = "${{ github.repository_owner }}.github.io" ]; then
+            echo "path=/" >> "$GITHUB_OUTPUT"
+          else
+            echo "path=/${{ github.event.repository.name }}/" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: 类型检查 + 构建
+        env:
+          VITE_BASE: ${{ steps.base.outputs.path }}
+        run: npm run build
+
+      - name: 配置 Pages
+        uses: actions/configure-pages@v5
+
+      - name: 上传构建产物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    name: 发布
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 部署到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
