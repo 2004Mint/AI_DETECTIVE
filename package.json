@@ -2,7 +2,7 @@
   "name": "ai-detective",
   "private": true,
   "version": "1.0.0",
-  "description": "AI鉴定师 · AI DETECTIVE —— 校园招新互动小游戏（重庆外语外事学院 人工智能学生研讨与践习社）",
+  "description": "AI鉴定师 · AI DETECTIVE —— 校园招新互动小游戏（重庆外语外事学院 人工智能学生研讨与实践社）",
   "type": "module",
   "scripts": {
     "dev": "vite",

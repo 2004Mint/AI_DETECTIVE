@@ -94,7 +94,7 @@ function replay() {
         <p class="mt-1 text-[11px] font-medium leading-5 text-slate-300">
           重庆外语外事学院
           <br />
-          人工智能学生研讨与践习社
+          人工智能学生研讨与实践社
         </p>
       </div>
     </div>

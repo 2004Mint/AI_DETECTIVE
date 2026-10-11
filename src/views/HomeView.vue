@@ -37,7 +37,7 @@ function onCta() {
   <section class="mx-auto flex min-h-dvh w-full max-w-md flex-col items-center px-6 pb-safe pt-10 text-center">
     <!-- 社团横幅 -->
     <p class="animate-fade-up rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-[11px] font-semibold tracking-wider text-orange-200/80 backdrop-blur">
-      🧠 重庆外语外事学院 · 人工智能学生研讨与践习社
+      🧠 重庆外语外事学院 · 人工智能学生研讨与实践社
     </p>
 
     <!-- 主标题 -->
@@ -119,7 +119,7 @@ function onCta() {
       <p class="text-[11px] font-medium leading-5 text-slate-500">
         重庆外语外事学院
         <span class="mx-1 text-slate-600">·</span>
-        人工智能学生研讨与践习社
+        人工智能学生研讨与实践社
       </p>
       <p class="mt-1 text-[10px] text-slate-600">AI 研习社 出品 · 招新互动体验 v1.0</p>
     </footer>
