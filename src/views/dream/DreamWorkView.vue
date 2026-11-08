@@ -9,6 +9,7 @@ import { computed, ref, watch } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import DreamShell from '@/components/dream/DreamShell.vue'
 import WorkCover from '@/components/dream/WorkCover.vue'
+import CategoryBadge from '@/components/dream/CategoryBadge.vue'
 import AudioPlayer from '@/components/dream/AudioPlayer.vue'
 import PromptCard from '@/components/dream/PromptCard.vue'
 import VoteButton from '@/components/dream/VoteButton.vue'
@@ -78,14 +79,17 @@ watch(
         </template>
 
         <template v-else>
-          <button
-            type="button"
-            class="block w-full overflow-hidden rounded-2xl bg-white/5 ring-1 ring-white/10"
-            :aria-label="`放大查看《${work.title}》`"
-            @click="openZoom"
-          >
-            <WorkCover :work="work" eager />
-          </button>
+          <div class="relative">
+            <button
+              type="button"
+              class="block w-full overflow-hidden rounded-2xl bg-white/5 ring-1 ring-white/10"
+              :aria-label="`放大查看《${work.title}》`"
+              @click="openZoom"
+            >
+              <WorkCover :work="work" eager />
+            </button>
+            <CategoryBadge :category="work.category" size="md" class="absolute left-2 top-2" />
+          </div>
         </template>
 
         <!-- 作品信息 -->

@@ -14,7 +14,7 @@ import '@/assets/dream.css'
 
 <template>
   <div class="dream-scope flex min-h-dvh flex-col">
-    <header class="sticky top-0 z-30 border-b border-white/5 bg-night/70 backdrop-blur-xl">
+    <header class="sticky top-0 z-30 border-b border-white/5 bg-night/90 backdrop-blur-xl">
       <div class="mx-auto flex h-14 w-full max-w-5xl items-center justify-between gap-3 px-5">
         <div class="flex min-w-0 items-center gap-2.5">
           <!-- 返回游乐场：二级活动的左上角统一入口 -->

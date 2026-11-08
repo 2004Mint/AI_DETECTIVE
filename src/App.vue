@@ -46,7 +46,8 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="relative min-h-dvh overflow-x-hidden bg-night text-slate-100">
+  <!-- overflow-x-clip 而不是 hidden：hidden 会让这层变成滚动容器，页面里的 sticky 顶栏/分类栏会全部失效 -->
+  <div class="relative min-h-dvh overflow-x-clip bg-night text-slate-100">
     <!-- 全局星空 / 光晕背景（纯装饰，不拦截点击） -->
     <BgScenery />
 

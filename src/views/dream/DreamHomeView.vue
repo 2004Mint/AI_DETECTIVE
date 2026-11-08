@@ -2,26 +2,22 @@
 /**
  * AI 造梦事务所 · 首页
  *
- * 只有四块：品牌区、分类胶囊、作品画廊、排行榜入口（顶部导航）。
- * 分类切换在本地过滤，不跳页；画廊用两列瀑布流，图片完整展示。
+ * 只有四块：品牌区、分类栏、当前分类说明、作品画廊（排行榜入口在顶部导航）。
+ *
+ * 分类栏做成「图标 + 数量 + 分类色选中态」的分段控件，
+ * 切换在本地过滤、不跳页；说明文字跟着选中项一起变，让人一眼知道这一栏是什么。
  */
 import { computed, ref } from 'vue'
 import DreamShell from '@/components/dream/DreamShell.vue'
-import FilterTabs from '@/components/dream/FilterTabs.vue'
+import CategoryRail from '@/components/dream/CategoryRail.vue'
+import CategoryIntro from '@/components/dream/CategoryIntro.vue'
 import WorkGallery from '@/components/dream/WorkGallery.vue'
-import { DREAM_CATEGORIES } from '@/data/dream/categories'
 import { DREAM_SITE } from '@/data/dream/site'
 import { allWorks, newestWorks } from '@/utils/dream'
-import type { DreamCategoryKey } from '@/types/dream'
-
-/** 分类胶囊：全部 + 四个分类短名 */
-const FILTERS = [
-  { key: 'all' as const, label: '全部' },
-  ...DREAM_CATEGORIES.map((category) => ({ key: category.key, label: category.short })),
-]
+import type { DreamCategoryFilter } from '@/types/dream'
 
 const works = computed(() => newestWorks(allWorks()))
-const active = ref<DreamCategoryKey | 'all'>('all')
+const active = ref<DreamCategoryFilter>('all')
 
 const listed = computed(() =>
   active.value === 'all'
@@ -46,13 +42,18 @@ const emptyTitle = computed(() =>
       </p>
     </section>
 
-    <!-- 2. 分类导航（滚动时吸附在顶栏下） -->
-    <nav class="sticky top-14 z-20 -mx-5 mt-5 bg-night/80 px-5 py-2 backdrop-blur-xl">
-      <FilterTabs v-model="active" :options="FILTERS" />
-    </nav>
+    <!-- 2. 分类栏（滚动时吸附在顶栏下） -->
+    <div class="dream-railbar mt-4">
+      <div class="dream-railbar-inner">
+        <CategoryRail v-model="active" />
+      </div>
+    </div>
 
-    <!-- 3. 作品画廊 -->
-    <section class="mt-2" v-reveal="90">
+    <!-- 3. 当前分类说明 -->
+    <CategoryIntro :category="active" link class="mt-3.5" v-reveal="60" />
+
+    <!-- 4. 作品画廊 -->
+    <section class="mt-4" v-reveal="120">
       <Transition name="dream-fade" mode="out-in">
         <div :key="active">
           <WorkGallery

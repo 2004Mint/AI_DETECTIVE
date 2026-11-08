@@ -11,6 +11,9 @@
 /** 四个创作分类的键（与文件系统、路由参数一致） */
 export type DreamCategoryKey = 'visual' | 'text' | 'music' | 'idea'
 
+/** 分类栏的取值：四个分类 + 「全部」（首页就地筛选时用） */
+export type DreamCategoryFilter = DreamCategoryKey | 'all'
+
 /** 详情页媒体类型：图片 / 文字 / 音频 */
 export type DreamMediaKind = 'image' | 'text' | 'audio'
 

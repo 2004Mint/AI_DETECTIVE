@@ -61,7 +61,14 @@ const rankTone = computed(() => {
       </p>
 
       <p class="mt-0.5 flex items-center gap-1.5 text-[10px] text-slate-500">
-        <span>{{ category?.short ?? '未分类' }}</span>
+        <span class="flex items-center gap-1">
+          <span
+            class="h-1 w-1 shrink-0 rounded-full"
+            :style="{ background: category?.accent ?? '#94a3b8' }"
+            aria-hidden="true"
+          />
+          {{ category?.short ?? '未分类' }}
+        </span>
         <span
           v-if="voted"
           class="rounded-full bg-brand/15 px-1.5 py-px text-[9px] font-medium text-brand-light"
