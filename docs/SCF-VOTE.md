@@ -176,3 +176,34 @@ GitHub Actions 里改 `.github/workflows/deploy.yml`：
 
 **Q：函数 URL 打不开？**
 确认触发器里的鉴权是「无需鉴权」，并确认函数 URL 的路径包含 `/release` 前缀（控制台会给完整地址）。
+
+---
+
+## 八、本次实际部署记录（2026-11-09）
+
+| 项 | 值 |
+| --- | --- |
+| 函数名 | `dream-vote` |
+| 函数地域 | 广州（ap-guangzhou） |
+| COS 桶 | `mint-1351489053`（重庆 ap-chongqing，私有读写） |
+| 函数 URL | `https://1351489053-fy0kzncc3f.ap-guangzhou.tencentscf.com` |
+| 环境变量 | `TENCENT_SECRET_ID` / `TENCENT_SECRET_KEY` / `COS_BUCKET=mint-1351489053` / `COS_REGION=ap-chongqing` |
+| 触发器 | 函数 URL，`AuthType=NONE`，CORS 全开，GET/POST/OPTIONS |
+| 前端接入 | `.github/workflows/deploy.yml` 里的 `VITE_VOTE_API` |
+
+已实测：
+
+- `GET /votes` → `{"counts":{},"total":0}`
+- `POST /vote {"id":"visual-01"}` → `{"counts":{"visual-01":1},"total":1}`
+- 线上双端：A 浏览器投票后，B 浏览器刷新榜单票数同步 +1
+
+### 两个踩坑记录
+
+1. **API 创建函数会报 `UnauthorizedOperation.Role`**：SCF 要求调用方有 `cam:PassRole`，当前密钥没有。
+   绕法是先在控制台建一个空函数壳（模板无所谓），再用 `UpdateFunctionCode` / `UpdateFunctionConfiguration` / `CreateTrigger` 三个 API 把代码、环境变量、函数 URL 灌进去——这些都不需要 PassRole。
+2. **zip 里不要带 node_modules**：见上面打包说明。
+
+### 安全建议
+
+当前函数的环境变量里存的是**主账号密钥**（为了省事）。更稳的做法是：
+新建一个子账号，只授予 `COS` 该桶的读写权限，用它替换函数里的两个环境变量，然后作废旧密钥。

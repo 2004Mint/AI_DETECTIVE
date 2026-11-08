@@ -131,7 +131,7 @@ function parseRequest(event) {
   return { method, path, body }
 }
 
-exports.main_handler = async function main_handler(event) {
+async function main_handler(event) {
   const { method, path, body } = parseRequest(event)
 
   if (method === 'OPTIONS') {
@@ -161,3 +161,5 @@ exports.main_handler = async function main_handler(event) {
 
   return reply(404, { error: 'not found' })
 }
+
+module.exports = { main_handler }

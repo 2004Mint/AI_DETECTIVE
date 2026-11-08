@@ -1,20 +1,25 @@
-# 打包腾讯云 SCF 函数（Windows / PowerShell）
+# Package the Tencent SCF function into dist-scf/vote-scf.zip
 #
-# 用法：pwsh scripts/pack-scf.ps1
-# 产物：dist-scf/vote-scf.zip（直接上传到云函数控制台）
+# Usage:  powershell -NoProfile -ExecutionPolicy Bypass -File scripts/pack-scf.ps1
+#
+# Why bundle: the official COS SDK drags in 74 packages / ~1200 files, and SCF's
+# unzip step rejects that archive ("zip code format error"). Bundling everything
+# into one index.js keeps the zip at two files.
+#
+# Keep this file ASCII-only: Windows PowerShell 5.1 reads .ps1 as ANSI.
 
 $ErrorActionPreference = 'Stop'
 
 $root = Split-Path -Parent $PSScriptRoot
 $src = Join-Path $root 'server\scf'
-$outDir = Join-Path $root 'dist-scf'
-$zip = Join-Path $outDir 'vote-scf.zip'
+$stage = Join-Path $root 'dist-scf\package'
+$zip = Join-Path $root 'dist-scf\vote-scf.zip'
+$esbuild = Join-Path $root 'node_modules\esbuild\bin\esbuild'
 
-if (-not (Test-Path $src)) {
-  throw "找不到函数目录：$src"
-}
+if (-not (Test-Path $src)) { throw "function folder not found: $src" }
+if (-not (Test-Path $esbuild)) { throw 'esbuild not found, run npm install first' }
 
-Write-Host '安装函数依赖（仅生产依赖）…'
+Write-Host 'Installing function dependencies...'
 Push-Location $src
 try {
   npm install --omit=dev --no-audit --no-fund
@@ -22,19 +27,19 @@ try {
   Pop-Location
 }
 
-New-Item -ItemType Directory -Force -Path $outDir | Out-Null
+Write-Host 'Bundling into a single CommonJS file...'
+New-Item -ItemType Directory -Force -Path $stage | Out-Null
+$outFile = Join-Path $stage 'index.js'
+& node $esbuild (Join-Path $src 'entry.cjs') --bundle --platform=node --target=node18 --format=cjs ("--outfile=" + $outFile) --log-level=warning
+if ($LASTEXITCODE -ne 0) { throw 'esbuild failed' }
+
+Set-Content -Path (Join-Path $stage 'package.json') -Encoding ASCII -Value '{ "name": "dream-vote", "version": "1.0.0", "main": "index.js" }'
+
+Write-Host 'Zipping...'
+Add-Type -AssemblyName System.IO.Compression.FileSystem
 if (Test-Path $zip) { Remove-Item $zip -Force }
+[System.IO.Compression.ZipFile]::CreateFromDirectory($stage, $zip, [System.IO.Compression.CompressionLevel]::Optimal, $false)
 
-Write-Host '打包…'
-# 三个必须项：入口、依赖清单、node_modules
-$items = @(
-  (Join-Path $src 'index.js'),
-  (Join-Path $src 'package.json'),
-  (Join-Path $src 'node_modules')
-) | Where-Object { Test-Path $_ }
-
-Compress-Archive -Path $items -DestinationPath $zip -CompressionLevel Optimal
-
-$size = [math]::Round((Get-Item $zip).Length / 1KB)
-Write-Host "完成：$zip（${size} KB）"
-Write-Host '上传到云函数控制台时，执行方法填 index.main_handler'
+$sizeKb = [math]::Round((Get-Item $zip).Length / 1KB)
+Write-Host ("Done: {0} ({1} KB, 2 files)" -f $zip, $sizeKb)
+Write-Host 'Handler: index.main_handler'
