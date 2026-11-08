@@ -28,7 +28,7 @@ if (Test-Path $zip) { Remove-Item $zip -Force }
 Write-Host '打包…'
 # 三个必须项：入口、依赖清单、node_modules
 $items = @(
-  (Join-Path $src 'index.mjs'),
+  (Join-Path $src 'index.js'),
   (Join-Path $src 'package.json'),
   (Join-Path $src 'node_modules')
 ) | Where-Object { Test-Path $_ }

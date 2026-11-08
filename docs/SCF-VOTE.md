@@ -9,6 +9,41 @@
 
 ---
 
+## 零、先看这里：整件事长什么样
+
+你要创建 4 样东西，全部在你自己的腾讯云账号下：
+
+1. **一个对象存储桶（COS）** —— 放票数文件
+2. **一个子账号密钥** —— 让函数能读写这个桶
+3. **一个云函数** —— 跑计票逻辑（代码我已写好，打包上传即可）
+4. **一个函数 URL** —— 给前端调的 HTTPS 地址
+
+控制台直达：
+
+| 要做什么 | 地址 |
+| --- | --- |
+| 实名认证（没做过先做，刷脸 1 分钟） | https://console.cloud.tencent.com/developer |
+| 创建 COS 桶 | https://console.cloud.tencent.com/cos/bucket |
+| 创建子账号 / 拿密钥 | https://console.cloud.tencent.com/cam |
+| 创建云函数 | https://console.cloud.tencent.com/scf/list |
+
+全程约 15–20 分钟，不需要买服务器，也不需要域名。
+
+**检查点**（每步做完应该看到）：
+
+| 步骤 | 你应该看到 |
+| --- | --- |
+| 建桶 | 桶列表里出现 `dream-vote-xxxxxxxxx`，地域记为 ap-xxx |
+| 建密钥 | 弹窗里出现 SecretId / SecretKey（SecretKey 只显示一次，先粘贴到记事本） |
+| 传代码 | 函数详情页「函数代码」能预览到 index.js |
+| 加触发器 | 出现一条「函数 URL」，形如 `https://xxxx.apigw.tencentcs.com/release` |
+| 自测 | 浏览器打开 `<函数URL>/votes` 返回 `{"counts":{},"total":0}` |
+
+> 如果控制台里找不到「函数 URL」，用「API 网关触发器」也能达到同样效果，地址形如
+> `https://service-xxxx.gz.apigw.tencentcs.com/release/votes`。
+
+---
+
 ## 一、准备（约 10 分钟）
 
 ### 1. 建一个 COS 存储桶
@@ -39,7 +74,7 @@
 pwsh scripts/pack-scf.ps1
 ```
 
-会得到 `dist-scf/vote-scf.zip`（内含 `index.mjs`、`package.json` 和 `node_modules`）。
+会得到 `dist-scf/vote-scf.zip`（内含 `index.js`、`package.json` 和 `node_modules`）。
 
 ---
 
@@ -51,9 +86,9 @@ pwsh scripts/pack-scf.ps1
 | --- | --- |
 | 创建方式 | 从头开始 |
 | 函数类型 | 事件函数 |
-| 运行环境 | Node.js 18 |
+| 运行环境 | Node.js 18（CommonJS，不要用 .mjs） |
 | 提交方法 | 上传 ZIP 包（选上一步的 `vote-scf.zip`） |
-| 执行方法 | `index.main_handler` |
+| 执行方法 | `index.main_handler`（入口是 CommonJS 的 `index.js`） |
 | 内存 / 超时 | 128 MB / 5 秒 |
 | **并发上限** | **1**（重要：避免多人同时投票互相覆盖） |
 
