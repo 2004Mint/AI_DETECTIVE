@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "vite",
     "typecheck": "vue-tsc --noEmit",
-    "build": "npm run typecheck && vite build",
+    "build": "npm run typecheck && vite build && node scripts/spa-fallback.mjs",
     "check:rounds": "node --no-warnings --experimental-strip-types scripts/check-rounds.ts",
     "check:dream": "node --no-warnings --experimental-strip-types scripts/check-dream.ts",
     "check:personality": "node --no-warnings --experimental-strip-types scripts/check-personality.ts",
