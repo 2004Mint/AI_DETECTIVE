@@ -56,6 +56,8 @@ jobs:
       - name: 类型检查 + 构建
         env:
           VITE_BASE: ${{ steps.base.outputs.path }}
+          # 共享计票接口（腾讯云 SCF 函数 URL，见 docs/SCF-VOTE.md）
+          VITE_VOTE_API: https://1351489053-fy0kzncc3f.ap-guangzhou.tencentscf.com
         run: npm run build
 
       - name: 配置 Pages
