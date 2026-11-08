@@ -12,8 +12,13 @@
  * 所有请求都有超时和形状校验；失败只会让页面退回本机模式，不会白屏。
  */
 
-/** 后端地址；留空 = 纯本机投票 */
-const BASE = (import.meta.env.VITE_VOTE_API ?? '').trim().replace(/\/+$/, '')
+/**
+ * 后端地址；留空 = 纯本机投票。
+ * 写成 `self` / `.` / `/` 表示与页面同源——自托管（server/vote-server.mjs）时用这个。
+ */
+const RAW = (import.meta.env.VITE_VOTE_API ?? '').trim()
+const SAME_ORIGIN = RAW === 'self' || RAW === '.' || RAW === '/'
+const BASE = SAME_ORIGIN ? '' : RAW.replace(/\/+$/, '')
 
 /** 请求超时（毫秒）：现场网络差时不要一直转圈 */
 const TIMEOUT = 6000
@@ -25,9 +30,9 @@ export interface VoteTotals {
   total: number
 }
 
-/** 是否接入了共享后端 */
+/** 是否接入了共享后端（同源也算） */
 export function hasRemoteVotes(): boolean {
-  return BASE.length > 0
+  return SAME_ORIGIN || BASE.length > 0
 }
 
 /** 带超时的 fetch */

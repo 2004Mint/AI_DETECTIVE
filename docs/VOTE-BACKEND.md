@@ -84,3 +84,15 @@ GitHub Pages 的做法：编辑 `.github/workflows/deploy.yml` 的构建步骤�
 - `src/stores/dream.ts` — `vote()` / `syncVotes()` / `displayVotes`
 - `workers/vote-worker.js` — Worker 实现
 - `wrangler.toml` — 部署配置
+
+---
+
+## 六、三种部署形态，挑一个
+
+| 形态 | 适合 | 文档 |
+| --- | --- | --- |
+| **腾讯云 SCF + COS**（国内 Serverless） | 不想买服务器、用云厂商免费额度 | [docs/SCF-VOTE.md](SCF-VOTE.md) |
+| **自托管 Node 服务** | 有台常开的服务器/VPS/校内主机 | `server/vote-server.mjs`（零依赖，静态页 + 计票一体） |
+| **Cloudflare Worker** | 有自己域名（`*.workers.dev` 在国内被墙） | `workers/vote-worker.js` + `wrangler.toml` |
+
+三种都遵守上面的两个接口，前端只需改 `VITE_VOTE_API`；自托管形态可以直接写 `self`（同源）。

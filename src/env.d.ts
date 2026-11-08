@@ -6,7 +6,7 @@
 interface ImportMetaEnv {
   /** 资源基础路径：'/' 或 '/仓库名/' 或 './' */
   readonly BASE_URL: string
-  /** 可选的共享投票后端地址（留空 = 纯本机投票） */
+  /** 共享投票后端：留空=本机，`self`=同源自托管，或完整 URL */
   readonly VITE_VOTE_API?: string
 }
 

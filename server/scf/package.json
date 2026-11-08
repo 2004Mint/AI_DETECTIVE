@@ -1,0 +1,10 @@
+{
+  "name": "dream-vote-scf",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AI 造梦事务所 · 腾讯云 SCF 计票函数",
+  "dependencies": {
+    "cos-nodejs-sdk-v5": "^2.14.6"
+  }
+}
