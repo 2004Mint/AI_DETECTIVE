@@ -342,6 +342,7 @@ export const DREAM_WORKS: DreamWork[] = [
     id: 'music-08',
     title: 'Sunset By The Sea',
     category: 'music',
+    cover: 'music-08.webp',
     coverAspect: 'square',
     description: '温柔治愈的室内乐：钢琴、大提琴与长笛，像海边黄昏慢慢安静下来，最后只剩一架钢琴。',
     audioUrl: 'music-08.mp3',
