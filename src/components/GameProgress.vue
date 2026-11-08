@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * 游戏进度条：顶部 HUD —— 品牌名 + 第 X/10 关 + 进度条
+ * 游戏进度条：顶部 HUD —— 品牌名 + 第 X/N 关 + 进度条
  */
 import { Sparkles } from 'lucide-vue-next'
 

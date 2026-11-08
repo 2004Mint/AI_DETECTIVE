@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * 游戏主视图：第 X/10 关 · 二选一鉴定 · 揭晓答案弹窗 · 积分 HUD
+ * 游戏主视图：第 X/N 关 · 二选一鉴定 · 揭晓答案弹窗 · 积分 HUD
  *
  * 交互节奏（选中 → 确认 → 判定揭晓）：
  * 1. 点图片 = 选中（高亮 + 「已选中」角标），可以随时改选，**不会直接提交**；
@@ -222,8 +222,8 @@ const isLast = computed(() => result.value?.isLastRound ?? false)
       <button
         type="button"
         class="grid h-9 w-9 place-items-center rounded-full border border-white/10 bg-white/5 text-slate-300 backdrop-blur transition hover:bg-white/10 active:scale-90"
-        aria-label="返回首页（进度已自动保存）"
-        @click="router.push('/')"
+        aria-label="返回 AI 鉴定师首页（进度已自动保存）"
+        @click="router.push('/detective')"
       >
         <Home :size="18" />
       </button>
@@ -237,7 +237,7 @@ const isLast = computed(() => result.value?.isLastRound ?? false)
 
     <!-- 题目区 -->
     <div class="flex-1">
-      <h2 class="animate-fade-up mt-5 text-center font-display text-[21px] font-black leading-snug text-white">
+      <h2 class="mt-5 text-center font-display text-[21px] font-black leading-snug text-white" v-reveal="0">
         哪张图片是 <span class="text-candy">AI 生成</span> 的？
       </h2>
       <p class="mt-2.5 flex items-center justify-center gap-2 text-xs font-semibold text-slate-400">
@@ -247,7 +247,7 @@ const isLast = computed(() => result.value?.isLastRound ?? false)
       </p>
 
       <!-- 研小鸿提示 -->
-      <div v-if="!reveal" class="mt-3 flex justify-center">
+      <div v-if="!reveal" class="mt-3 flex justify-center" v-reveal="60">
         <MascotBubble
           :text="foxTip"
           size="sm"
@@ -262,6 +262,7 @@ const isLast = computed(() => result.value?.isLastRound ?? false)
         <div class="grid gap-4">
           <QuestionCard
             :key="`${question.id}-A`"
+            v-reveal="110"
             side="A"
             :src="question.imageA.url"
             :is-ai="question.imageA.type === 'ai'"
@@ -275,6 +276,7 @@ const isLast = computed(() => result.value?.isLastRound ?? false)
           />
           <QuestionCard
             :key="`${question.id}-B`"
+            v-reveal="170"
             side="B"
             :src="question.imageB.url"
             :is-ai="question.imageB.type === 'ai'"

@@ -4,31 +4,50 @@
 
 > 重庆外语外事学院 · 人工智能学生研讨与实践社 · 线下摆台招新活动
 >
-> 玩家扫码进入手机 Web，用 10 道“真实照片 vs AI 生成图”的对局感受 AI 的发展，
+> 玩家扫码进入手机 Web，用 3 道“真实照片 vs AI 生成图”的对局感受 AI 的发展，
 > 传递社团理念 —— **“AI 赋能各学科”**。
+
+---
+
+## 🎟 活动入口：AI 灵感游乐场
+
+扫码后先进入总入口页 `/`，再选择具体板块：
+
+| 板块 | 路由 | 说明 |
+| --- | --- | --- |
+| AI 鉴定师 | `/detective` | 本 README 介绍的 3 关眼力挑战 |
+| AI 造梦事务所 | `/dream-studio` | 线上 AI 作品展：看作品、读提示词、投票（见 [docs/DREAM-STUDIO.md](docs/DREAM-STUDIO.md)） |
+| AI 人格研究所 | `/personality` | 5 道趣味题 → 8 种人格档案，可分享/存图（见 [docs/PERSONALITY.md](docs/PERSONALITY.md)） |
+| 更多板块 | — | 入口页已预留「筹备中」占位，新增板块只需加一条路由 + 一张卡片 |
+
+入口页、鉴定师、造梦事务所、人格研究所共用同一套视觉：暖可可夜底 + 围巾橙 + 星空光晕 + 研小鸿形象。
+
+> 作品录入：访问 `/admin` 打开**内容管理后台**（可视化增删作品、上传封面/音频、改站点文案，
+> 导出 `works.ts` / `site.ts` / 素材 ZIP），说明见 [docs/ADMIN.md](docs/ADMIN.md)。
 
 ---
 
 ## ✨ 玩法与页面
 
 ```
-首页 ──▶ 规则 ──▶ 第 1~10 关（二选一）──▶ 结算（称号）──▶ 社团招新页
+扫码 ──▶ 入口页(/) ──▶ AI 鉴定师(/detective) ──▶ 规则 ──▶ 第 1~3 关 ──▶ 结算 ──▶ 招新页
 ```
 
 - 每关展示图片 A / B（一张真实的、一张 AI 生成），**点选**你认为 AI 生成的那张 → 再点
   **「确认选择」**提交（点选只表示选中，可以随时改选，不会手滑直接交答案）；
   点图片右上角的放大按钮可以看**完整未裁切的原图**（卡片上是 `object-cover` 裁切过的）；
 - **出题规则**：按题材（动物 / 美食 / 风景 / 绘画）随机配对 —— 同一题材内各抽 1 张 AI 图 + 1 张真实图；
-  一局 10 题**不重复出题、不重复用图**，四大题材尽量均分（3 / 3 / 2 / 2），
-  AI 图的左右位置保持 5 : 5 均衡（规则实现集中在 `src/utils/roundBuilder.ts`）；
-- 计分：答对 +100；连击奖励：连对 2 题 +50、3 题 +100、5 题 +200（以 5 连为一周期循环，
-  理论最高 **1700 分**）；答错连击归零；
+  一局 3 题**不重复出题、不重复用图**，四大题材尽量均分（1 / 1 / 1 / 0，每局随机闲置 1 个题材），
+  AI 图的左右位置保持 2 : 1 均衡（规则实现集中在 `src/utils/roundBuilder.ts`）；
+- 计分：答对 +100；连击奖励：连对 2 题 +50、3 题 +100（5 连 +200 的规则保留，一局 3 题用不到），
+  单局理论最高 **450 分**；答错连击归零；
 - 答完每题立即揭晓：显示两张图的真实身份（哪张 AI / 哪张真实）与本题得分，并给出研小鸿贴士；
-- 称号：0~2 AI 实习生 🐣 / 3~5 AI 观察员 🔭 / 6~7 AI 侦察员 🔍 / 8~9 AI 鉴定师 🕵️ / 10 人类观察大师 👑；
-- 挑战途中刷新页面可**断点续玩**（localStorage 快照，键 `ai-detective:run:v2`）。
+- 称号：0 题 AI 实习生 🐣 / 1 题 AI 观察员 🔭 / 2 题 AI 鉴定师 🕵️ / 3 题全对 人类观察大师 👑；
+- 挑战途中刷新页面可**断点续玩**（localStorage 快照，键 `ai-detective:run:v2`；
+  题数与当前关数对不上的旧快照（例如旧版 10 题）会被自动丢弃）。
 
-页面：`HomeView`（首页）/ `RuleView`（规则）/ `GameView`（10 关游戏）/ `ResultView`（结算+称号）/
-`RecruitView`（招新，底部预留二维码位）。
+页面：`PortalView`（总入口）/ `HomeView`（鉴定师首页，`/detective`）/ `RuleView`（规则）/
+`GameView`（3 关游戏）/ `ResultView`（结算+称号）/ `RecruitView`（招新，底部预留二维码位）。
 
 ## 🛠 技术栈
 
@@ -44,6 +63,8 @@ npm run typecheck    # vue-tsc 类型检查
 npm run build        # 类型检查 + 生产构建（输出 dist/）
 npm run preview      # 预览构建产物 http://localhost:4173
 npm run check:rounds # 素材体检 + 抽题规则自检（换图后跑一次，见「规则四」）
+npm run check:dream  # 造梦事务所作品数据自检（加作品后跑一次，见 docs/DREAM-STUDIO.md）
+npm run check:personality # 人格研究所匹配规则自检（改题/改分后跑一次，见 docs/PERSONALITY.md）
 ```
 
 构建产物为纯静态文件，放到任意静态服务器/对象存储即可扫码访问
@@ -110,20 +131,29 @@ src/
 ├── assets/
 │   ├── images/ai/        # ★ AI 生成图素材（<题材>_<序号>）
 │   ├── images/real/      # ★ 真实图素材（同题材前缀，序号可与 ai/ 不同）
+│   ├── dream.css         # 造梦事务所的深色画廊样式（与全站主题一致）
 │   └── main.css          # 全局样式 / 动画 / 路由过渡
 ├── components/           # GameProgress / QuestionCard / ScorePanel /
 │                         # ResultModal / MascotBubble / MascotPet / BgScenery
-├── data/question-copy.ts # ★ 研小鸿贴士池 + 各题材标签 / 文案池
+│   └── dream/            # 造梦事务所：Shell / 画廊 / 卡片 / 播放器 / 投票 / 排行
+├── data/
+│   ├── question-copy.ts  # ★ 研小鸿贴士池 + 各题材标签 / 文案池
+│   └── dream/            # 造梦事务所：分类与作品数据（作品待填）
 ├── router/index.ts       # 路由 + 状态守卫（刷新可恢复）
-├── stores/game.ts        # Pinia：题目/积分/连击/称号/快照持久化
-├── types/game.ts         # 全部 TS 类型
+├── stores/
+│   ├── game.ts           # Pinia：题目/积分/连击/称号/快照持久化
+│   └── dream.ts          # Pinia：投票 + 留言（本机持久化）
+├── types/                # game.ts / dream.ts
 ├── utils/
 │   ├── assetName.ts      # 素材文件名解析（<题材>_<序号>）
 │   ├── random.ts         # 洗牌 / 随机取值（随机源可注入，便于自检）
 │   ├── roundBuilder.ts   # ★ 抽题规则：同题材配对、局内不重复、题材均分
 │   ├── scoring.ts        # 计分 / 连击 / 称号
+│   ├── dream.ts          # 造梦：排序 / 筛选 / 票数 / 留言校验
+│   ├── dreamStorage.ts   # 造梦：localStorage 读写
 │   └── useCountUp.ts     # 数字滚动动画
-└── views/                # Home / Rule / Game / Result / Recruit
+└── views/                # Portal / Home / Rule / Game / Result / Recruit
+    └── dream/            # 造梦：首页 / 分类 / 详情 / 人气榜
 
 scripts/check-rounds.ts   # 素材体检 + 抽题规则自检（npm run check:rounds）
 ```
@@ -163,26 +193,27 @@ scripts/check-rounds.ts   # 素材体检 + 抽题规则自检（npm run check:ro
 | `painting` | `painting_1~5` | `painting_1~5` | 绘画：AI 模仿的动画风插画 vs **人类画师作品**（所以真实侧标签是「人类画作」而非「真实照片」） |
 
 **共 40 张素材**：同题材内可组合 5 × 5 = 25 种题目，4 个题材合计 **100 种不重复题目**，
-而一局只用 10 题，素材量非常充裕。
+而一局只用 3 题，素材量非常充裕。
 
 **配对建议**：因为是同题材内随机配对，同一题材里的图**风格越接近、构图越像，题目越有挑战性**；
 反过来，某个题材里只要有一张特别容易识破的图，它就会以约 1/5 的概率出现在每一道该题材的题里，
 明显拉低这个题材的难度 —— 换图时留意这一点。
 
-### 规则三：抽题规则（一局 10 题）
+### 规则三：抽题规则（一局 3 题）
 
 | 规则 | 说明 | 实现位置 |
 | --- | --- | --- |
 | 同题材配对 | 一道题的两张图必来自同一题材池 | `roundBuilder.buildRoundPairs` |
 | 不重复出题 | 一局内「题材 + AI 图 + 真实图」组合互不相同 | 同上（每个 AI 图一局只用一次） |
 | 不重复用图 | 一局内任何一张图片都不会出现两次 | 同上（洗牌后整段切片） |
-| 题材均分 | 4 个题材分 10 题 = 3 / 3 / 2 / 2（哪个题材多一题随机） | `roundBuilder.planCategoryCounts` |
-| 答案均衡 | AI 图落在 A / B 的比例是 5 : 5，避免答案规律被猜到 | `roundBuilder.planAiSides` |
+| 题材均分 | 4 个题材分 3 题 = 1 / 1 / 1 / 0（每局随机闲置 1 个题材，下局再洗牌） | `roundBuilder.planCategoryCounts` |
+| 答案均衡 | AI 图落在 A / B 的比例是 2 : 1，避免答案规律被猜到 | `roundBuilder.planAiSides` |
 | 素材不足时优雅降级 | 某题材素材不够就把题量摊给其它题材；总量不够就少出几题 | `planCategoryCounts` 容量上限 |
 
-> 「不重复」的范围是**一局之内**（10 题），答完 10 题进入下一局就重新洗牌 ——
-> 这正是「出现过的题不会再出现，直到完成 10 道题」的规则。
-> 关卡数在 `src/utils/scoring.ts` 的 `TOTAL_ROUNDS` 调整。
+> 「不重复」的范围是**一局之内**（3 题），答完 3 题进入下一局就重新洗牌 ——
+> 这正是「出现过的题不会再出现，直到完成 3 道题」的规则。
+> 关卡数在 `src/utils/scoring.ts` 的 `TOTAL_ROUNDS` 调整（称号档位、连击上限、
+> 首页/规则页文案都会跟着它变；改完记得跑一次 `npm run check:rounds`）。
 
 ### 规则四：换图之后怎么验证
 
@@ -234,7 +265,7 @@ const ANIMAL: CategoryCopy = {
 
 ### 规则七：图片体积优化（WebP）
 
-素材原图合计 38 MB（`ai/` 下多为 PNG 存照片，单张最大 3 MB），而 10 题一轮要在手机上加载 20 张，
+素材原图合计 38 MB（`ai/` 下多为 PNG 存照片，单张最大 3 MB），而 3 题一轮要在手机上加载 6 张，
 弱网下每轮都要白等好几秒。现已统一转成 WebP，整包降到 **4.8 MB（省 88%）**：
 
 ```bash

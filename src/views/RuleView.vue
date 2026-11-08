@@ -15,7 +15,7 @@ import {
 } from 'lucide-vue-next'
 import { useGameStore } from '@/stores/game'
 import { POOL_STATS } from '@/api/questions'
-import { BASE_SCORE } from '@/utils/scoring'
+import { BASE_SCORE, TOTAL_ROUNDS } from '@/utils/scoring'
 
 const router = useRouter()
 const game = useGameStore()
@@ -29,20 +29,18 @@ const categoryText =
 /** 素材库图片总数（AI 图 + 真实图） */
 const assetCount = POOL_STATS.aiCount + POOL_STATS.realCount
 
-/** 连击奖励预告（与 utils/scoring 保持一致） */
+/** 连击奖励预告（与 utils/scoring 保持一致；一局 3 题，最高只到 3 连） */
 const COMBO_RULES = [
   { streak: 2, bonus: 50 },
   { streak: 3, bonus: 100 },
-  { streak: 5, bonus: 200 },
 ] as const
 
-/** 称号预告 */
+/** 称号预告（与 utils/scoring 的 TITLES 保持一致：一局 3 题共 4 档） */
 const TITLE_PREVIEW = [
-  { range: '10 题', name: '人类观察大师', emoji: '👑' },
-  { range: '8~9', name: 'AI 鉴定师', emoji: '🕵️' },
-  { range: '6~7', name: 'AI 侦察员', emoji: '🔍' },
-  { range: '3~5', name: 'AI 观察员', emoji: '🔭' },
-  { range: '0~2', name: 'AI 实习生', emoji: '🐣' },
+  { range: `${TOTAL_ROUNDS} 题`, name: '人类观察大师', emoji: '👑' },
+  { range: '2 题', name: 'AI 鉴定师', emoji: '🕵️' },
+  { range: '1 题', name: 'AI 观察员', emoji: '🔭' },
+  { range: '0 题', name: 'AI 实习生', emoji: '🐣' },
 ] as const
 
 function startGame() {
@@ -54,12 +52,12 @@ function startGame() {
 <template>
   <section class="mx-auto flex min-h-dvh w-full max-w-md flex-col px-5 pb-safe pt-6">
     <!-- 返回 + 标题 -->
-    <div class="animate-fade-up flex items-center gap-3">
+    <div class="flex items-center gap-3" v-reveal="70">
       <button
         type="button"
         class="grid h-9 w-9 place-items-center rounded-full border border-white/10 bg-white/5 text-slate-300 backdrop-blur transition hover:bg-white/10 active:scale-90"
-        aria-label="返回首页"
-        @click="router.push('/')"
+        aria-label="返回 AI 鉴定师首页"
+        @click="router.push('/detective')"
       >
         <ChevronLeft :size="20" />
       </button>
@@ -67,7 +65,7 @@ function startGame() {
     </div>
 
     <!-- 玩法说明 -->
-    <div class="glass animate-fade-up mt-5 p-5 [animation-delay:0.05s]">
+    <div class="glass mt-5 p-5" v-reveal="140">
       <p class="flex items-center gap-2 text-sm font-black tracking-widest text-orange-300">
         <ScanSearch :size="17" aria-hidden="true" /> 玩法
       </p>
@@ -85,11 +83,11 @@ function startGame() {
     </div>
 
     <!-- 规则列表 -->
-    <ul class="animate-fade-up mt-4 space-y-2.5 [animation-delay:0.12s]">
+    <ul class="mt-4 space-y-2.5" v-reveal="210">
       <li class="glass flex items-center gap-3 px-4 py-3">
         <Layers :size="19" class="shrink-0 text-amber-300" aria-hidden="true" />
         <p class="text-sm text-slate-200">
-          <b class="text-white">共 10 关</b>，{{ categoryText }}均衡出题，同一局内不会重复
+          <b class="text-white">共 {{ TOTAL_ROUNDS }} 关</b>，{{ categoryText }}随机抽题，同一局内不会重复
         </p>
       </li>
       <li class="glass flex items-center gap-3 px-4 py-3">
@@ -127,9 +125,9 @@ function startGame() {
     </ul>
 
     <!-- 称号预告 -->
-    <div class="animate-fade-up mt-4 p-5 [animation-delay:0.18s]">
+    <div class="mt-4 p-5" v-reveal="280">
       <p class="text-center text-[11px] font-black tracking-[0.3em] text-slate-400">称号等级</p>
-      <div class="mt-3 grid grid-cols-5 gap-1.5 text-center">
+      <div class="mt-3 grid grid-cols-4 gap-1.5 text-center">
         <div
           v-for="t in TITLE_PREVIEW"
           :key="t.name"
@@ -143,13 +141,13 @@ function startGame() {
     </div>
 
     <!-- 开始 -->
-    <div class="animate-fade-up mt-6 [animation-delay:0.25s]">
+    <div class="mt-6" v-reveal="350">
       <button type="button" class="btn-primary w-full text-lg" @click="startGame">
         <Swords :size="20" aria-hidden="true" />
         开始鉴定
       </button>
       <p class="mt-3 text-center text-[11px] text-slate-500">
-        {{ assetCount }} 张素材随机配对 · 每局 10 题都不一样哦
+        {{ assetCount }} 张素材随机配对 · 每局 {{ TOTAL_ROUNDS }} 题都不一样哦
       </p>
     </div>
   </section>

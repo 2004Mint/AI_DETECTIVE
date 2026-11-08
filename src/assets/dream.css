@@ -1,0 +1,257 @@
+/* ==========================================================================
+   AI 造梦事务所 · 深色展览主题
+   --------------------------------------------------------------------------
+   与「AI 鉴定师」统一：暖可可夜底 + 围巾橙点缀 + 玻璃卡片。
+   背景交给 App.vue 的 bg-stage / BgScenery（星空与光晕），本文件只管排版细节。
+   ========================================================================== */
+
+.dream-scope {
+  position: relative;
+  min-height: 100dvh;
+  color: #f3ede6;
+}
+
+/* 中文正文 / 提示词用宋体，和界面正文拉开层次 */
+.dream-serif {
+  font-family:
+    'Songti SC',
+    'Noto Serif SC',
+    'Source Han Serif SC',
+    'STSong',
+    Georgia,
+    'Times New Roman',
+    serif;
+}
+
+/* ---------- 分类胶囊 ---------- */
+
+.dream-tab {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.38rem 0.72rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: rgba(243, 237, 230, 0.55);
+  transition:
+    color 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.dream-tab:hover {
+  color: #fff;
+}
+
+.dream-tab-active {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+/* ---------- 文字链接 ---------- */
+
+.dream-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgba(243, 237, 230, 0.55);
+  transition: color 0.18s ease;
+}
+
+.dream-link:hover {
+  color: #fff;
+}
+
+/* ---------- 按钮 ---------- */
+
+.dream-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border-radius: 999px;
+  padding: 0.6rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.2;
+  transition:
+    transform 0.15s ease,
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    filter 0.18s ease;
+}
+
+.dream-btn:active {
+  transform: scale(0.98);
+}
+
+.dream-btn:disabled {
+  cursor: default;
+}
+
+/* 与游戏主按钮同一套橙金渐变 */
+.dream-btn-primary {
+  color: #3d1d05;
+  background-image: linear-gradient(115deg, #ffc14d 0%, #ff8a1c 38%, #ff5c46 74%, #ffb020 100%);
+  background-size: 160% auto;
+  box-shadow:
+    0 12px 28px -12px rgba(255, 120, 30, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.dream-btn-primary:hover {
+  filter: saturate(1.06) brightness(1.02);
+}
+
+.dream-btn-quiet {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+  color: #f3ede6;
+}
+
+.dream-btn-quiet:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ---------- 两列 / 多列瀑布流 ---------- */
+
+.dream-masonry {
+  columns: 2;
+  column-gap: 0.65rem;
+}
+
+.dream-masonry > * {
+  break-inside: avoid;
+  margin-bottom: 1.1rem;
+}
+
+@media (min-width: 640px) {
+  .dream-masonry {
+    columns: 3;
+    column-gap: 0.85rem;
+  }
+
+  .dream-masonry > * {
+    margin-bottom: 1.4rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .dream-masonry {
+    columns: 4;
+  }
+}
+
+/* 横向滚动（分类胶囊）：隐藏滚动条但保留滑动 */
+.dream-scroll-x {
+  scrollbar-width: none;
+}
+
+.dream-scroll-x::-webkit-scrollbar {
+  display: none;
+}
+
+/* 分类切换的轻量淡入 */
+.dream-fade-enter-active,
+.dream-fade-leave-active {
+  transition: opacity 0.16s ease;
+}
+
+.dream-fade-enter-from,
+.dream-fade-leave-to {
+  opacity: 0;
+}
+
+/* ---------- 音频进度条 ---------- */
+
+.dream-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  cursor: pointer;
+}
+
+.dream-range:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.dream-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 12px;
+  width: 12px;
+  border-radius: 999px;
+  background: #ff8a1c;
+  border: 2px solid #2a1710;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.dream-range::-moz-range-thumb {
+  height: 12px;
+  width: 12px;
+  border: 2px solid #2a1710;
+  border-radius: 999px;
+  background: #ff8a1c;
+}
+
+/* ==========================================================================
+   以下样式只服务「创意留言」组件（首页已不再展示，但代码和数据保留）
+   ========================================================================== */
+
+.dream-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+}
+
+.dream-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(243, 237, 230, 0.7);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dream-field {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.7rem 0.85rem;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #f3ede6;
+  resize: vertical;
+}
+
+.dream-field::placeholder {
+  color: rgba(243, 237, 230, 0.38);
+}
+
+.dream-field:focus {
+  outline: none;
+  border-color: rgba(255, 138, 28, 0.5);
+  box-shadow: 0 0 0 3px rgba(255, 138, 28, 0.16);
+}
+
+.dream-kicker {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(243, 237, 230, 0.45);
+}

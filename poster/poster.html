@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1240" />
+<title>AI 鉴定师 · 招新海报（A3 竖版 297×420mm）</title>
+<!--
+  ============================================================================
+  AI 鉴定师 · 线下摆台招新海报（A3 竖版，画布 1240 × 1754 px ≈ 150dpi）
+  ----------------------------------------------------------------------------
+  设计令牌与 index.html / tailwind.config.js 同源：
+    暖可可夜底 #1a0d08 → #2a1710，围巾橙 #ff8a1c，琥珀 #fbbf24，糖果流光渐变
+  结构从上到下：社团抬头 → 主标题 → A? VS B? 实拍对战 → 三个数据点
+                → 二维码区（真码已嵌入，换码只改 assets/qr.png）→ 摆台信息
+  导出：在 poster/ 目录执行 build-poster.ps1（Edge 无头截图，2 倍输出 = 300dpi A3）
+  ============================================================================
+-->
+<style>
+  /* ---------- 设计令牌 ---------- */
+  :root {
+    --w: 1240px;
+    --h: 1754px;
+    --pad: 92px;
+    --night-deep: #1a0d08;
+    --night: #2a1710;
+    --brand: #ff8a1c;
+    --brand-light: #ffb35c;
+    --amber: #fbbf24;
+    --cream: #fff6e6;
+    --ink: #3d1d05;
+    --font-cn: 'PingFang SC', 'Microsoft YaHei', 'Source Han Sans CN', system-ui, sans-serif;
+    --font-display: 'YouSheBiaoTiHei', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --font-en: 'Arial Black', 'Segoe UI Black', 'Arial Rounded MT Bold', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: var(--w); height: var(--h); overflow: hidden; }
+  body {
+    font-family: var(--font-cn);
+    color: #fff;
+    background: var(--night-deep);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ---------- 画布：暖可可夜 + 橙/玫瑰光晕（与页面 .bg-stage 同构） ---------- */
+  .canvas {
+    position: relative;
+    width: var(--w);
+    height: var(--h);
+    overflow: hidden;
+    background:
+      radial-gradient(58% 38% at 8% -8%, rgba(255, 140, 45, 0.38), transparent 62%),
+      radial-gradient(46% 30% at 97% 6%, rgba(255, 120, 40, 0.22), transparent 62%),
+      radial-gradient(64% 42% at 80% 106%, rgba(255, 96, 120, 0.20), transparent 64%),
+      linear-gradient(180deg, #3c2214 0%, #2a1710 44%, #1c0f08 100%);
+  }
+
+  /* 细网点纸（科技感底纹，向中心淡出） */
+  .grid {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.085) 1.4px, transparent 1.4px);
+    background-size: 34px 34px;
+    -webkit-mask-image: radial-gradient(74% 58% at 50% 16%, #000 0%, transparent 76%);
+    mask-image: radial-gradient(74% 58% at 50% 16%, #000 0%, transparent 76%);
+    opacity: 0.55;
+  }
+  .glow { position: absolute; border-radius: 50%; filter: blur(90px); }
+  .glow-a { width: 620px; height: 620px; left: -220px; top: 240px; background: rgba(255, 138, 28, 0.20); }
+  .glow-b { width: 560px; height: 560px; right: -200px; top: 880px; background: rgba(255, 92, 138, 0.16); }
+
+  /* ---------- 取景框（鉴定 / 取景器气质） ---------- */
+  .frame {
+    position: absolute;
+    inset: 30px;
+    border-radius: 44px;
+    border: 1.5px solid rgba(255, 255, 255, 0.085);
+  }
+  .corner { position: absolute; width: 42px; height: 42px; border: 3px solid rgba(255, 179, 92, 0.75); }
+  .corner.tl { left: 30px; top: 30px; border-right: 0; border-bottom: 0; border-radius: 44px 0 0 0; }
+  .corner.tr { right: 30px; top: 30px; border-left: 0; border-bottom: 0; border-radius: 0 44px 0 0; }
+  .corner.bl { left: 30px; bottom: 30px; border-right: 0; border-top: 0; border-radius: 0 0 0 44px; }
+  .corner.br { right: 30px; bottom: 30px; border-left: 0; border-top: 0; border-radius: 0 0 44px 0; }
+
+  /* ---------- 抬头 ---------- */
+  .header {
+    position: absolute;
+    left: var(--pad);
+    right: var(--pad);
+    top: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .brandline { display: flex; align-items: center; gap: 16px; }
+  .hex-ring {
+    display: grid;
+    place-items: center;
+    width: 58px;
+    height: 58px;
+    padding: 3px;
+    background: rgba(255, 246, 230, 0.55);
+    clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+  }
+  .hex {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(158deg, #ffd96b 0%, #ff8a1c 52%, #ff4f6d 100%);
+    clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+    font-family: var(--font-en);
+    font-size: 21px;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+  }
+  .org strong {
+    display: block;
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: #ffe8cf;
+  }
+  .org small {
+    display: block;
+    margin-top: 5px;
+    font-size: 13.5px;
+    font-weight: 600;
+    letter-spacing: 0.20em;
+    color: rgba(255, 226, 198, 0.62);
+  }
+  .pill-top {
+    padding: 12px 26px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    font-size: 14.5px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    color: #ffd9a8;
+  }
+
+  /* ---------- 主标题区 ---------- */
+  .hero {
+    position: absolute;
+    left: var(--pad);
+    right: var(--pad);
+    top: 150px;
+    text-align: center;
+  }
+  .kicker {
+    display: inline-block;
+    padding: 11px 30px 11px 38px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.34em;
+    color: #ffd9a8;
+  }
+  .title-en {
+    margin-top: 14px;
+    font-family: var(--font-en);
+    font-style: italic;
+    font-size: 106px;
+    line-height: 0.94;
+    font-weight: 900;
+    letter-spacing: 0.015em;
+    background: linear-gradient(100deg, #ffd96b 0%, #ffab3d 20%, #ff8a1c 42%, #ff5c8a 66%, #ffc46b 86%, #ffd96b 100%);
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 8px 30px rgba(255, 110, 30, 0.45));
+  }
+  .title-cn {
+    margin-top: 2px;
+    font-family: var(--font-display);
+    font-size: 156px;
+    line-height: 1.02;
+    letter-spacing: 0.04em;
+    color: #fff;
+    text-shadow:
+      0 5px 0 rgba(120, 40, 0, 0.30),
+      0 18px 48px rgba(255, 138, 28, 0.48);
+  }
+  .sub {
+    margin-top: 18px;
+    font-size: 29px;
+    font-weight: 700;
+    line-height: 1.55;
+    color: rgba(255, 244, 232, 0.86);
+  }
+  .sub b {
+    display: inline-block;
+    margin-top: 2px;
+    font-family: var(--font-display);
+    font-size: 38px;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    color: var(--amber);
+    text-shadow: 0 0 34px rgba(251, 191, 36, 0.45);
+  }
+
+  /* ---------- A? VS B? 实拍对战 ---------- */
+  .arena { position: absolute; left: 0; right: 0; top: 620px; height: 400px; }
+  .card {
+    position: absolute;
+    width: 396px;
+    height: 296px;
+    border-radius: 28px;
+    background: #3a2113;
+    box-shadow:
+      0 0 0 8px rgba(255, 255, 255, 0.06),
+      0 0 0 9.5px rgba(255, 255, 255, 0.20),
+      0 28px 56px -18px rgba(0, 0, 0, 0.88),
+      0 0 66px -14px rgba(255, 150, 60, 0.55);
+  }
+  .card-inner { position: absolute; inset: 0; border-radius: 28px; overflow: hidden; }
+  .card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .card::after {
+    content: '';
+    position: absolute;
+    inset: 11px;
+    border-radius: 20px;
+    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.32);
+    pointer-events: none;
+  }
+  .card-a { left: 104px; top: 46px; transform: rotate(-6deg); }
+  .card-b { right: 104px; top: 46px; transform: rotate(6deg); }
+  .badge {
+    position: absolute;
+    left: 22px;
+    top: 22px;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    padding: 9px 18px;
+    border-radius: 15px;
+    background: rgba(14, 7, 3, 0.62);
+    border: 1px solid rgba(255, 255, 255, 0.26);
+    font-family: var(--font-en);
+    font-size: 25px;
+    line-height: 1;
+    color: #fff;
+  }
+  .badge span { font-size: 21px; color: #ffbf6b; }
+  .vs {
+    position: absolute;
+    left: 50%;
+    top: 194px;
+    transform: translate(-50%, -50%) rotate(-8deg);
+    width: 122px;
+    height: 122px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(158deg, #ffd96b 0%, #ff8a1c 46%, #ff4f6d 100%);
+    box-shadow:
+      0 0 0 8px rgba(255, 255, 255, 0.92),
+      0 18px 44px -10px rgba(255, 110, 30, 0.85),
+      0 0 80px -6px rgba(255, 160, 70, 0.7);
+    font-family: var(--font-en);
+    font-style: italic;
+    font-size: 42px;
+    color: var(--ink);
+  }
+  .cap {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    color: rgba(255, 226, 198, 0.58);
+  }
+
+  /* ---------- 三个数据点 ---------- */
+  .chips {
+    position: absolute;
+    left: var(--pad);
+    right: var(--pad);
+    top: 1040px;
+    display: flex;
+    gap: 16px;
+  }
+  .chip {
+    flex: 1;
+    padding: 16px 12px 17px;
+    border-radius: 22px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10);
+  }
+  .chip b {
+    display: block;
+    font-family: var(--font-en);
+    font-style: italic;
+    font-size: 34px;
+    line-height: 1;
+    color: #ffbe6b;
+    letter-spacing: 0.01em;
+  }
+  .chip i {
+    display: block;
+    margin-top: 8px;
+    font-size: 14.5px;
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: rgba(255, 240, 226, 0.70);
+  }
+
+  /* ---------- 二维码区 ---------- */
+  .qr-panel {
+    position: absolute;
+    left: var(--pad);
+    right: var(--pad);
+    top: 1158px;
+    height: 420px;
+    border-radius: 40px;
+    padding: 38px 44px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    background:
+      radial-gradient(120% 76% at 50% -18%, rgba(255, 176, 90, 0.24), transparent 64%),
+      linear-gradient(168deg, rgba(96, 58, 33, 0.94) 0%, rgba(45, 23, 9, 0.94) 100%);
+    border: 2.5px dashed rgba(255, 138, 28, 0.60);
+    box-shadow:
+      0 34px 66px -28px rgba(0, 0, 0, 0.92),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      0 0 96px -34px rgba(255, 138, 28, 0.6);
+  }
+  .qr-col { flex: 0 0 auto; text-align: center; }
+  .qr-label {
+    margin-bottom: 12px;
+    font-size: 12.5px;
+    font-weight: 800;
+    letter-spacing: 0.28em;
+    color: rgba(255, 210, 170, 0.78);
+  }
+  /* 二维码原图是深色底（341px），外层白卡保证识别率 —— 换码只替换 assets/qr.png */
+  .qr-card {
+    width: 304px;
+    padding: 16px;
+    border-radius: 26px;
+    background: #fff;
+    box-shadow:
+      0 18px 34px -14px rgba(0, 0, 0, 0.7),
+      0 0 0 1px rgba(255, 255, 255, 0.85),
+      0 0 44px -8px rgba(255, 190, 120, 0.42);
+  }
+  .qr-card img { display: block; width: 272px; height: 272px; margin: 0 auto; }
+
+  .qr-text { flex: 1 1 auto; min-width: 0; }
+  .qr-title {
+    font-family: var(--font-display);
+    font-size: 50px;
+    letter-spacing: 0.06em;
+    line-height: 1.06;
+    background: linear-gradient(100deg, #ffe08a 0%, #ffab3d 42%, #ff8a1c 72%, #ffc46b 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 4px 16px rgba(255, 120, 30, 0.45));
+  }
+  .qr-note {
+    margin-top: 10px;
+    font-size: 15.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: rgba(255, 236, 220, 0.66);
+  }
+  .steps { margin-top: 20px; display: flex; flex-direction: column; gap: 13px; }
+  .step { display: flex; align-items: center; gap: 12px; }
+  .step b {
+    flex: 0 0 auto;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(158deg, #ffc14d, #ff7a1c);
+    font-family: var(--font-en);
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .step span { font-size: 17.5px; font-weight: 700; color: rgba(255, 246, 236, 0.94); }
+  .bonus {
+    display: inline-block;
+    margin-top: 22px;
+    padding: 10px 20px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.11);
+    border: 1px solid rgba(255, 179, 92, 0.34);
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: #ffd7a2;
+  }
+  .mascot-col { flex: 0 0 auto; text-align: center; align-self: flex-end; }
+  .mascot-col img { display: block; width: 176px; height: 176px; transform: rotate(-3deg); }
+  .mascot-name {
+    margin-top: -6px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    color: rgba(255, 226, 198, 0.55);
+  }
+
+  /* ---------- 页脚：摆台信息 ---------- */
+  .footer { position: absolute; left: var(--pad); right: var(--pad); top: 1610px; text-align: center; }
+  .meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 13px 0;
+    font-size: 17px;
+    font-weight: 700;
+    color: rgba(255, 236, 220, 0.80);
+  }
+  .meta b {
+    margin-right: 8px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    background: rgba(255, 138, 28, 0.18);
+    font-size: 12.5px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    color: #ffc98f;
+  }
+  .meta .sep { width: 5px; height: 5px; border-radius: 50%; background: rgba(255, 179, 92, 0.5); }
+  .meta .blank { color: rgba(255, 214, 168, 0.55); letter-spacing: 0.1em; }
+  .sign {
+    margin-top: 6px;
+    font-size: 13.5px;
+    font-weight: 600;
+    letter-spacing: 0.10em;
+    color: rgba(255, 226, 198, 0.40);
+  }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <div class="grid"></div>
+  <div class="glow glow-a"></div>
+  <div class="glow glow-b"></div>
+
+  <!-- 取景框 -->
+  <div class="frame"></div>
+  <span class="corner tl"></span>
+  <span class="corner tr"></span>
+  <span class="corner bl"></span>
+  <span class="corner br"></span>
+
+  <!-- 抬头 -->
+  <header class="header">
+    <div class="brandline">
+      <span class="hex-ring"><span class="hex">AI</span></span>
+      <div class="org">
+        <strong>重庆外语外事学院</strong>
+        <small>人工智能学生研讨与实践社</small>
+      </div>
+    </div>
+    <div class="pill-top">线下摆台 · 扫码即玩</div>
+  </header>
+
+  <!-- 主标题 -->
+  <section class="hero">
+    <div class="kicker">校园招新 · 眼力挑战</div>
+    <h1 class="title-en">AI&nbsp;DETECTIVE</h1>
+    <p class="title-cn">AI 鉴定师</p>
+    <p class="sub">
+      两张图，一张是真的，一张是 AI 生成的<br />
+      <b>你，分得出来吗？</b>
+    </p>
+  </section>
+
+  <!-- A? VS B? 对战 -->
+  <section class="arena">
+    <figure class="card card-a">
+      <div class="card-inner"><img src="assets/photo-real.webp" alt="候选图 A" /></div>
+      <figcaption class="badge">A<span>?</span></figcaption>
+    </figure>
+    <figure class="card card-b">
+      <div class="card-inner"><img src="assets/photo-ai.webp" alt="候选图 B" /></div>
+      <figcaption class="badge">B<span>?</span></figcaption>
+    </figure>
+    <div class="vs">VS</div>
+    <p class="cap">放大看细节 · 别被 AI 骗过去了</p>
+  </section>
+
+  <!-- 三个数据点 -->
+  <section class="chips">
+    <div class="chip"><b>3</b><i>关 · 每关二选一</i></div>
+    <div class="chip"><b>450</b><i>满连击的最高分</i></div>
+    <div class="chip"><b>4 段</b><i>称号等你解锁</i></div>
+  </section>
+
+  <!-- 二维码区 -->
+  <section class="qr-panel">
+    <div class="qr-col">
+      <div class="qr-label">扫 一 扫 · SCAN</div>
+      <div class="qr-card">
+        <img src="assets/qr.png" alt="AI 研习社招新小游戏二维码" />
+      </div>
+    </div>
+
+    <div class="qr-text">
+      <p class="qr-title">扫码开玩</p>
+      <p class="qr-note">1 分钟一局 · 手机直接打开 · 不用下载</p>
+      <div class="steps">
+        <div class="step"><b>1</b><span>扫码进入手机端小游戏</span></div>
+        <div class="step"><b>2</b><span>3 道题，找出 AI 生成的那张</span></div>
+        <div class="step"><b>3</b><span>晒出称号，来摊位兑换见面礼</span></div>
+      </div>
+      <span class="bonus">🎁 通关即有机会领取社团限定小周边</span>
+    </div>
+
+    <div class="mascot-col">
+      <img src="assets/mascot.webp" alt="研小鸿" />
+      <p class="mascot-name">研 小 鸿</p>
+    </div>
+  </section>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <p class="meta">
+      <span><b>摆台时间</b><span class="blank">__ 月 __ 日 — __ 月 __ 日</span></span>
+      <span class="sep"></span>
+      <span><b>摆台地点</b><span class="blank">__________</span></span>
+    </p>
+    <p class="sign">重庆外语外事学院 · 人工智能学生研讨与实践社　｜　AI 不止于想象，更要一起玩出花样。</p>
+  </footer>
+</div>
+</body>
+</html>

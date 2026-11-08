@@ -35,8 +35,11 @@ function isRunSnapshot(value: unknown): value is RunSnapshot {
     typeof v.maxCombo === 'number' &&
     typeof v.correctCount === 'number' &&
     Array.isArray(v.questions) &&
-    v.questions.length > 0 &&
-    Array.isArray(v.answers)
+    // 题数必须与当前一局的关数一致：旧版本（10 题）留下的快照直接作废，
+    // 否则进度条会算出 >100%，称号档位也对不上
+    v.questions.length === TOTAL_ROUNDS &&
+    Array.isArray(v.answers) &&
+    v.answers.length <= TOTAL_ROUNDS
   )
 }
 
@@ -45,7 +48,9 @@ function loadSnapshot(): RunSnapshot | null {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return null
     const parsed: unknown = JSON.parse(raw)
-    return isRunSnapshot(parsed) ? parsed : null
+    if (isRunSnapshot(parsed)) return parsed
+    localStorage.removeItem(STORAGE_KEY) // 丢弃不兼容的旧快照，避免每局重复解析
+    return null
   } catch {
     return null
   }
@@ -94,7 +99,7 @@ export const useGameStore = defineStore('game', () => {
   )
   /** 最近一次作答记录 */
   const lastAnswer = computed(() => answers.value[answers.value.length - 1] ?? null)
-  /** 是否已答完全部 10 题 */
+  /** 是否已答完全部题目（TOTAL_ROUNDS 题） */
   const allAnswered = computed(() => answeredCount.value >= TOTAL_ROUNDS)
 
   /* ---------------- helpers ---------------- */

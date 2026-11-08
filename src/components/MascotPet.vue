@@ -1,4 +1,6 @@
 <script lang="ts">
+import { TOTAL_ROUNDS } from '@/utils/scoring'
+
 /**
  * 场景情绪 → 表情帧号 的集中映射（帧号与精灵图行优先顺序一致）：
  *   0 你好！  1 太棒了！  2 ？  3 赞！
@@ -18,14 +20,15 @@ export const MASCOT_MOOD = {
 } as const
 
 /**
- * 结算页情绪：按答对题数挑选表情
- * 10 → 太棒了！/ 8~9 → 赞！/ 6~7 → 哈哈哈~ / 3~5 → 嘿嘿~ / 0~2 → 呜...(共情安慰)
+ * 结算页情绪：按答对题数占一局总题数的比例挑选表情
+ * 全对 → 太棒了！/ ≥2/3 → 赞！/ ≥1/3 → 嘿嘿~ / 更低 → 呜...(共情安慰)
+ * 比例写法让表情跟着 `TOTAL_ROUNDS` 自动适配，改关卡数不用再动这里。
  */
 export function mascotFrameForScore(correct: number): number {
-  if (correct >= 10) return 1
-  if (correct >= 8) return 3
-  if (correct >= 6) return 4
-  if (correct >= 3) return 9
+  const ratio = TOTAL_ROUNDS > 0 ? correct / TOTAL_ROUNDS : 0
+  if (ratio >= 1) return 1
+  if (ratio >= 2 / 3) return 3
+  if (ratio >= 1 / 3) return 9
   return 6
 }
 </script>

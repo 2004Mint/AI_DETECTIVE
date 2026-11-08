@@ -1,0 +1,389 @@
+/**
+ * AI 人格研究所 · 局部样式
+ *
+ * 结果页走「票根档案」：深色卡面 + 打孔撕票线 + 沿边框游走的光带。
+ * 只写 Tailwind 不好表达的部分，颜色统一跟 --accent 走。
+ */
+
+.pl-scope {
+  --accent: #ff8a1c;
+}
+
+/* ---------------- 档案卡（票根） ---------------- */
+
+@property --beam-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.pl-card {
+  --notch-y: 128px;
+  --beam-angle: 0deg;
+  position: relative;
+  isolation: isolate;
+  border-radius: 26px;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      120% 58% at 50% -6%,
+      color-mix(in srgb, var(--accent) 22%, transparent) 0%,
+      transparent 58%
+    ),
+    radial-gradient(90% 42% at 104% 106%, color-mix(in srgb, var(--accent) 12%, transparent) 0%, transparent 62%),
+    linear-gradient(180deg, #22150c 0%, #150d07 54%, #1c1109 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 1px 0 rgba(0, 0, 0, 0.55),
+    0 34px 64px -30px rgba(0, 0, 0, 0.95);
+}
+
+/* 细颗粒噪点：让深色卡面有纸质感，而不是一块塑料 */
+.pl-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* 左右两侧的半圆缺口：真的把卡面挖掉，露出页面背景 */
+@supports ((mask-composite: intersect) or (-webkit-mask-composite: source-in)) {
+  .pl-card {
+    -webkit-mask-image:
+      radial-gradient(circle 11px at 0 var(--notch-y), transparent 97%, #000 100%),
+      radial-gradient(circle 11px at 100% var(--notch-y), transparent 97%, #000 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      radial-gradient(circle 11px at 0 var(--notch-y), transparent 97%, #000 100%),
+      radial-gradient(circle 11px at 100% var(--notch-y), transparent 97%, #000 100%);
+    mask-composite: intersect;
+  }
+}
+
+/* 沿边框游走的一束光 */
+.pl-beam {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  padding: 1.5px;
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--beam-angle),
+    transparent 0deg 46deg,
+    color-mix(in srgb, var(--accent) 92%, white) 92deg,
+    transparent 148deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 1;
+}
+
+/* 入场时扫过卡面的一道高光 */
+.pl-shine {
+  position: absolute;
+  top: -10%;
+  bottom: -10%;
+  left: 0;
+  z-index: 4;
+  width: 34%;
+  pointer-events: none;
+  opacity: 0;
+  transform: skewX(-14deg);
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.16) 50%,
+    transparent 100%
+  );
+  filter: blur(2px);
+}
+
+/* 顶部主题色辉光 */
+.pl-glow {
+  position: absolute;
+  left: 50%;
+  top: -72px;
+  z-index: 0;
+  width: 300px;
+  height: 210px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  border-radius: 999px;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--accent) 48%, transparent),
+    transparent 74%
+  );
+  filter: blur(16px);
+  opacity: 0.42;
+}
+
+/* 卡面里缓慢上浮的星尘 */
+.pl-stars {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.pl-spark {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 70%, white);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 80%, transparent);
+  opacity: 0;
+}
+
+/* 票头 */
+.pl-head {
+  position: relative;
+  z-index: 2;
+  padding: 18px 20px 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.055) 0%, transparent 72%);
+}
+
+.pl-eyebrow {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.pl-serial {
+  font-family: ui-rounded, 'PingFang SC', system-ui, sans-serif;
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.32);
+}
+
+/* 人格徽标 */
+.pl-badge {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  flex: none;
+  border-radius: 15px;
+  color: color-mix(in srgb, var(--accent) 85%, white);
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 42%, transparent);
+  box-shadow:
+    0 16px 30px -18px color-mix(in srgb, var(--accent) 90%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* 人格名 */
+.pl-name {
+  font-family: ui-rounded, 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+  font-size: 27px;
+  font-weight: 900;
+  line-height: 1.22;
+  letter-spacing: -0.012em;
+  color: #fff;
+  text-shadow:
+    0 0 32px color-mix(in srgb, var(--accent) 30%, transparent),
+    0 2px 18px rgba(0, 0, 0, 0.6);
+}
+.pl-char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* 宣言 */
+.pl-decl {
+  border-left: 2px solid color-mix(in srgb, var(--accent) 62%, transparent);
+  padding-left: 11px;
+  font-size: 14px;
+  line-height: 1.72;
+  color: rgba(255, 255, 255, 0.84);
+}
+
+/* 关键词胶囊 */
+.pl-chip {
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 11px;
+  line-height: 1.5;
+  font-weight: 500;
+  color: color-mix(in srgb, var(--accent) 72%, white);
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 34%, transparent);
+  backdrop-filter: blur(4px);
+}
+
+/* 撕票线：一排小圆点 */
+.pl-perf {
+  height: 2px;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.3) 1px, transparent 1.2px);
+  background-size: 7px 2px;
+  background-repeat: repeat-x;
+}
+
+/* 正文区 */
+.pl-body {
+  position: relative;
+  z-index: 2;
+  padding: 20px 20px 22px;
+}
+
+.pl-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  color: rgba(255, 255, 255, 0.32);
+}
+
+/* 台词 */
+.pl-quote {
+  position: relative;
+  border-radius: 16px;
+  padding: 14px 16px;
+  background: color-mix(in srgb, var(--accent) 9%, rgba(255, 255, 255, 0.015));
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.pl-quote::before {
+  content: '';
+  position: absolute;
+  left: 16px;
+  top: -1px;
+  width: 32px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent);
+}
+
+/* ---------------- 结果页操作区 ---------------- */
+
+.pl-cta {
+  @apply relative flex w-full items-center justify-center gap-2 rounded-2xl px-5 py-3.5 text-[15px] font-bold transition-all duration-200 active:scale-[0.98];
+  color: #2a1710;
+  background-image: linear-gradient(
+    115deg,
+    color-mix(in srgb, var(--accent) 55%, white) 0%,
+    var(--accent) 52%,
+    color-mix(in srgb, var(--accent) 82%, #ff5c46) 100%
+  );
+  box-shadow:
+    0 16px 34px -16px color-mix(in srgb, var(--accent) 80%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.pl-ghost {
+  @apply flex items-center justify-center gap-1.5 rounded-2xl border border-white/[0.08] bg-white/[0.03] py-3 text-[12.5px] font-semibold text-slate-300 transition-colors active:scale-[0.98];
+}
+.pl-ghost:hover {
+  @apply border-white/[0.14] bg-white/[0.07] text-white;
+}
+.pl-ghost:disabled {
+  @apply cursor-not-allowed opacity-60;
+}
+
+/* ---------------- 首页 ---------------- */
+
+.pl-watermark {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.16);
+  letter-spacing: 0.06em;
+  user-select: none;
+}
+
+/* ---------------- 答题 ---------------- */
+
+.pl-option {
+  @apply relative flex w-full items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3.5 text-left transition-all duration-200;
+  -webkit-tap-highlight-color: transparent;
+}
+.pl-option:hover {
+  @apply border-white/20 bg-white/[0.07];
+}
+.pl-option:active {
+  transform: scale(0.985);
+}
+.pl-option.is-picked {
+  border-color: rgba(255, 138, 28, 0.75);
+  background: linear-gradient(180deg, rgba(255, 138, 28, 0.16), rgba(255, 138, 28, 0.06));
+  box-shadow: 0 10px 26px -18px rgba(255, 138, 28, 0.9);
+}
+.pl-option.is-picked .pl-option-key {
+  @apply border-transparent text-[#3d1d05];
+  background: linear-gradient(120deg, #ffc14d, #ff8a1c);
+}
+
+.pl-option-key {
+  @apply grid h-7 w-7 shrink-0 place-items-center rounded-lg border border-white/15 text-[11px] font-bold text-slate-400 transition-colors;
+}
+
+.pl-progress {
+  @apply flex gap-1.5;
+}
+.pl-progress-seg {
+  @apply h-1.5 flex-1 rounded-full bg-white/10 transition-all duration-300;
+}
+.pl-progress-seg.is-done {
+  background: linear-gradient(90deg, #ffb35c, #ff8a1c);
+}
+
+/* ---------------- 动效 ---------------- */
+
+.pl-q-enter-active,
+.pl-q-leave-active {
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+.pl-q-enter-from {
+  opacity: 0;
+  transform: translateX(12px);
+}
+.pl-q-leave-to {
+  opacity: 0;
+  transform: translateX(-12px);
+}
+
+.pl-rise {
+  animation: pl-rise 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+@keyframes pl-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pl-in {
+  animation: pl-in 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+@keyframes pl-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pl-rise,
+  .pl-in {
+    animation: none;
+  }
+}

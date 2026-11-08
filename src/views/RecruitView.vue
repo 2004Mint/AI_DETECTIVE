@@ -3,6 +3,7 @@
  * 社团招新页：AI 赋能各学科 → AI研习社 → 一起探索/学习/实践/创造 AI → 招新二维码位
  */
 import { useRouter } from 'vue-router'
+import { leaveToPlayground } from '@/utils/pageWipe'
 import {
   BookOpen,
   Clapperboard,
@@ -53,6 +54,12 @@ function replay() {
   game.startGame()
   router.push('/game')
 }
+
+/** 返回游乐场：走统一的遮罩收缩动画 */
+function goHome(): void {
+  void leaveToPlayground({ push: () => router.push('/') })
+}
+
 </script>
 
 <template>
@@ -85,7 +92,7 @@ function replay() {
     </p>
 
     <!-- 社团名片 -->
-    <div class="glass animate-fade-up mt-7 flex items-center gap-4 p-5 [animation-delay:0.1s]">
+    <div class="glass mt-7 flex items-center gap-4 p-5" v-reveal="70">
       <MascotPet :size="92" class="animate-floaty shrink-0" />
       <div class="min-w-0">
         <p class="font-display text-2xl font-black tracking-wide text-white">
@@ -100,7 +107,7 @@ function replay() {
     </div>
 
     <!-- 一起行动 -->
-    <div class="animate-fade-up mt-6 grid grid-cols-2 gap-2.5 [animation-delay:0.18s]">
+    <div class="mt-6 grid grid-cols-2 gap-2.5" v-reveal="140">
       <div
         v-for="a in ACTS"
         :key="a.label"
@@ -116,7 +123,7 @@ function replay() {
     </p>
 
     <!-- 招新二维码 -->
-    <div class="animate-fade-up mt-7 [animation-delay:0.26s]">
+    <div class="mt-7" v-reveal="210">
       <div class="flex flex-col items-center gap-4 rounded-3xl border-2 border-dashed border-orange-400/40 bg-brand/5 px-6 py-7 text-center">
         <!-- 二维码原图是深色底（约 341px），所以：
              ① 外面套一层白卡，保证识别率；② 点一下直接看原图，防止小屏渲染糊掉 -->
@@ -155,7 +162,7 @@ function replay() {
         <RotateCcw :size="18" aria-hidden="true" />
         再玩一次
       </button>
-      <button type="button" class="btn-ghost w-full" @click="router.push('/')">返回首页</button>
+      <button type="button" class="btn-ghost w-full" @click="goHome">返回首页</button>
     </div>
   </section>
 </template>

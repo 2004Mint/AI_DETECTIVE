@@ -4,10 +4,11 @@
  * 出题规则（对应玩法需求）：
  * 1. 「同一题材内各抽一张」：一道题 = 同一题材（animal / food / landscape / painting …）
  *    下随机抽 1 张 AI 图 + 1 张真实图，所以 A / B 两张图永远属于同一题材；
- * 2. 「出现过的题不再出现」：一局 10 题内，
+ * 2. 「出现过的题不再出现」：一局 3 题内，
  *    - 不会出现重复的 (题材, AI 图, 真实图) 组合；
  *    - 任何一张图片（AI 或真实）都不会被用到两次；
- * 3. 「题材尽量均分」：10 题按 4 个题材分，结果是 3 / 3 / 2 / 2（哪个题材多一题随机决定）。
+ * 3. 「题材尽量均分」：3 题按 4 个题材分，结果是 1 / 1 / 1 / 0
+ *    （每局随机挑 3 个题材，剩下 1 个题材本局不出题，下一局再洗牌）。
  *
  * 本文件刻意不 import 任何工程模块（连类型都自带），
  * 以便用 `node --experimental-strip-types` 直接加载做批量自检（见 README「抽题自检」）。
@@ -36,11 +37,11 @@ export interface RoundPair<TAI, TReal> {
  * 把 `total` 道题分配到各题材上，尽量均分且不超过各题材容量。
  *
  * 做法：每一轮都把「当前出题数最少且还有余量」的题材 +1（并列时随机挑一个），
- * 因此 4 个容量充足的题材分 10 题一定得到 3 / 3 / 2 / 2。
+ * 因此 4 个容量充足的题材分 3 题一定得到 1 / 1 / 1 / 0。
  * 若某题材素材不足，它的缺口会自动摊给其它题材；素材总数不够时按上限返回。
  *
  * @param capacities 各题材最多能出几题（= min(AI 图数, 真实图数)）
- * @param total 一局需要的题数（10）
+ * @param total 一局需要的题数（TOTAL_ROUNDS，当前为 3）
  * @returns 与 capacities 等长的数组，第 i 项为第 i 个题材的出题数
  */
 export function planCategoryCounts(
@@ -110,8 +111,8 @@ export function buildRoundPairs<TAI, TReal>(
 }
 
 /**
- * 规划每道题里 AI 图放在哪一侧：总数尽量对半（10 题 = 5 个 A + 5 个 B），
- * 避免出现「连续 7 题答案都是 A」这类规律被玩家猜到。
+ * 规划每道题里 AI 图放在哪一侧：总数尽量对半（3 题 = 2 个 A + 1 个 B），
+ * 避免出现「答案总在同一侧」这类规律被玩家猜到。
  */
 export function planAiSides(total: number, random: RandomFn = Math.random): Array<'A' | 'B'> {
   const sides: Array<'A' | 'B'> = []

@@ -5,7 +5,7 @@
  */
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { History, Play } from 'lucide-vue-next'
+import { ChevronLeft, History, Play } from 'lucide-vue-next'
 import { useGameStore } from '@/stores/game'
 import { TOTAL_ROUNDS } from '@/utils/scoring'
 import MascotPet from '@/components/MascotPet.vue'
@@ -18,14 +18,14 @@ const canContinue = computed(
   () => game.status === 'playing' && game.questions.length > 0,
 )
 
-/** 继续时从第几关进入（答完 10 题但未点结算时兜底显示第 10 关） */
+/** 继续时从第几关进入（已答完全部题目但未点结算时兜底显示最后一关） */
 const continueRound = computed(() => Math.min(game.answeredCount + 1, TOTAL_ROUNDS))
 
 const ctaText = computed(() => (canContinue.value ? '继续挑战' : '开始挑战'))
 const ctaHint = computed(() =>
   canContinue.value
     ? `从第 ${continueRound.value} / ${TOTAL_ROUNDS} 关继续 · 已答对 ${game.correctCount} 题`
-    : '共 10 关 · 随机抽题不重复 · 答对赢积分和专属称号',
+    : `共 ${TOTAL_ROUNDS} 关 · 随机抽题不重复 · 答对赢积分和专属称号`,
 )
 
 function onCta() {
@@ -34,14 +34,24 @@ function onCta() {
 </script>
 
 <template>
-  <section class="mx-auto flex min-h-dvh w-full max-w-md flex-col items-center px-6 pb-safe pt-10 text-center">
+  <section class="mx-auto flex min-h-dvh w-full max-w-md flex-col items-center px-6 pb-safe pt-6 text-center">
+    <!-- 返回游乐场（二级活动左上角统一入口） -->
+    <RouterLink
+      to="/"
+      class="mb-4 inline-flex items-center gap-0.5 self-start rounded-full border border-white/10 bg-white/5 py-1.5 pl-1.5 pr-2.5 text-[11px] font-medium text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
+      aria-label="返回 AI 灵感游乐场"
+    >
+      <ChevronLeft :size="13" aria-hidden="true" />
+      游乐场
+    </RouterLink>
+
     <!-- 社团横幅 -->
-    <p class="animate-fade-up rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-[11px] font-semibold tracking-wider text-orange-200/80 backdrop-blur">
+    <p class="rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-[11px] font-semibold tracking-wider text-orange-200/80 backdrop-blur" v-reveal="70">
       🧠 重庆外语外事学院 · 人工智能学生研讨与实践社
     </p>
 
     <!-- 主标题 -->
-    <h1 class="mt-9">
+    <h1 class="mt-9" v-reveal="60">
       <span
         class="text-candy block font-display text-4xl font-black italic tracking-[0.06em] sm:text-5xl"
       >
@@ -55,7 +65,7 @@ function onCta() {
     </h1>
 
     <!-- 对局小预览：A ? VS B ? -->
-    <div class="mt-8 flex items-center gap-2.5" aria-hidden="true">
+    <div class="mt-8 flex items-center gap-2.5" aria-hidden="true" v-reveal="130">
       <div
         class="animate-floaty grid h-16 w-16 -rotate-6 place-items-center rounded-2xl bg-gradient-to-br from-amber-400/40 to-orange-400/25 font-display text-2xl font-black text-amber-100 ring-1 ring-amber-300/50"
         style="animation-delay: -0.6s"
@@ -76,14 +86,14 @@ function onCta() {
     </div>
 
     <!-- 主文案 -->
-    <p class="animate-fade-up mt-7 text-[15px] font-medium leading-7 text-slate-300 [animation-delay:0.15s]">
+    <p class="mt-7 text-[15px] font-medium leading-7 text-slate-300" v-reveal="190">
       当 AI 越来越像人，
       <br />
       你还能分辨出来吗？
     </p>
 
     <!-- 吉祥物：研小鸿 -->
-    <div class="animate-fade-up relative mt-6 flex flex-col items-center [animation-delay:0.25s]">
+    <div class="relative mt-6 flex flex-col items-center" v-reveal="250">
       <p
         class="animate-pop-in relative z-10 mb-1 rotate-[-2deg] rounded-2xl rounded-br-sm bg-[#fff6e6]/95 px-4 py-2 text-[13px] font-semibold text-[#5a3a20] shadow-card"
       >
@@ -100,7 +110,7 @@ function onCta() {
     </div>
 
     <!-- 开始挑战 / 继续挑战 -->
-    <div class="animate-fade-up mt-7 flex w-full flex-col items-center [animation-delay:0.35s]">
+    <div class="mt-7 flex w-full flex-col items-center" v-reveal="310">
       <button type="button" class="btn-primary w-full max-w-xs text-lg" @click="onCta">
         <History v-if="canContinue" :size="20" :stroke-width="2.6" aria-hidden="true" />
         <Play v-else :size="20" :stroke-width="2.6" aria-hidden="true" />
@@ -115,7 +125,7 @@ function onCta() {
     </div>
 
     <!-- 底部 -->
-    <footer class="mt-auto pt-10">
+    <footer class="mt-auto pt-10" v-reveal="370">
       <p class="text-[11px] font-medium leading-5 text-slate-500">
         重庆外语外事学院
         <span class="mx-1 text-slate-600">·</span>

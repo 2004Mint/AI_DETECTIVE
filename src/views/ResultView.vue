@@ -4,6 +4,7 @@
  */
 import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { leaveToPlayground } from '@/utils/pageWipe'
 import { Home, RotateCcw, Users } from 'lucide-vue-next'
 import { useGameStore } from '@/stores/game'
 import { titleOf, TOTAL_ROUNDS } from '@/utils/scoring'
@@ -40,6 +41,12 @@ function replay() {
   game.startGame()
   router.push('/game')
 }
+
+/** 返回游乐场：走统一的遮罩收缩动画 */
+function goHome(): void {
+  void leaveToPlayground({ push: () => router.push('/') })
+}
+
 </script>
 
 <template>
@@ -66,12 +73,12 @@ function replay() {
 
     <!-- 标题 -->
     <p class="animate-pop-in text-4xl" aria-hidden="true">🏁</p>
-    <h1 class="animate-fade-up mt-2 font-display text-3xl font-black tracking-wide text-white">
+    <h1 class="mt-2 font-display text-3xl font-black tracking-wide text-white" v-reveal="70">
       挑战完成！
     </h1>
 
     <!-- 最终得分（滚动动画） -->
-    <div class="animate-fade-up mt-6 [animation-delay:0.1s]">
+    <div class="mt-6" v-reveal="140">
       <p class="text-[11px] font-black tracking-[0.3em] text-slate-400">最终得分</p>
       <p
         class="text-candy mt-1 font-display text-7xl font-black tabular-nums drop-shadow-[0_6px_24px_rgba(251,191,36,0.35)]"
@@ -81,7 +88,7 @@ function replay() {
     </div>
 
     <!-- 统计卡片 -->
-    <div class="glass animate-fade-up mt-6 grid w-full grid-cols-3 divide-x divide-white/10 py-3.5 [animation-delay:0.18s]">
+    <div class="glass mt-6 grid w-full grid-cols-3 divide-x divide-white/10 py-3.5" v-reveal="210">
       <div>
         <p class="font-display text-2xl font-black text-emerald-300">
           {{ game.correctCount }}
@@ -102,7 +109,7 @@ function replay() {
     </div>
 
     <!-- 专属称号 -->
-    <div class="animate-fade-up mt-6 w-full [animation-delay:0.26s]">
+    <div class="mt-6 w-full" v-reveal="280">
       <div
         class="relative mx-auto grid h-24 w-24 -rotate-3 place-items-center rounded-[1.75rem] bg-gradient-to-br ring-4 ring-white/20"
         :class="title.gradient"
@@ -121,7 +128,7 @@ function replay() {
     </div>
 
     <!-- 操作 -->
-    <div class="animate-fade-up mt-7 flex w-full flex-col gap-3 [animation-delay:0.34s]">
+    <div class="mt-7 flex w-full flex-col gap-3" v-reveal="350">
       <button type="button" class="btn-primary w-full text-lg" @click="replay">
         <RotateCcw :size="19" aria-hidden="true" />
         再来一局
@@ -133,7 +140,7 @@ function replay() {
       <button
         type="button"
         class="mx-auto mt-1 flex items-center gap-1.5 text-xs font-semibold text-slate-400 transition hover:text-slate-200"
-        @click="router.push('/')"
+        @click="goHome"
       >
         <Home :size="14" aria-hidden="true" />
         返回首页

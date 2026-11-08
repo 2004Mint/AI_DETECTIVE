@@ -6,16 +6,17 @@
 import type { TitleInfo } from '@/types/game'
 
 /** 一局总关卡数 */
-export const TOTAL_ROUNDS = 10
+export const TOTAL_ROUNDS = 3
 /** 基础分：答对一题 */
 export const BASE_SCORE = 100
 
 /**
  * 连击奖励：连续答对时的里程碑加成。
  * 需求：连对 2 题 +50、3 题 +100、5 题 +200，答错归零。
- * 实现：以 5 连为一个奖励周期（2→+50, 3→+100, 5→+200，周期结束后循环：
- * 7→+50, 8→+100, 10→+200 ……），鼓励玩家冲击更高的连胜。
- * 单局最高可得 1700 分（100×10 + 奖励 700）。
+ * 实现：以 5 连为一个奖励周期（2→+50, 3→+100, 5→+200），
+ * 若连对超过 5 题则周期循环（7→+50, 8→+100, 10→+200 ……）。
+ * 一局 3 题时只会用到前两档（连对 2 题 +50、3 题 +100），
+ * 单局最高可得 450 分（100×3 + 奖励 150）。
  */
 const BONUS_CYCLE: ReadonlyArray<number> = [50, 100, 0, 200, 0]
 
@@ -31,10 +32,13 @@ export function roundPoints(streak: number): { base: number; bonus: number; tota
   return { base: BASE_SCORE, bonus, total: BASE_SCORE + bonus }
 }
 
-/** 称号梯度表（按答对题数升序） */
+/**
+ * 称号梯度表（按答对题数从高到低排列；`find` 取第一个命中的档位，所以顺序不能乱）。
+ * 一局只有 3 题，称号相应压成 4 档：3 / 2 / 1 / 0 题。
+ */
 const TITLES: ReadonlyArray<{ min: number; info: TitleInfo }> = [
   {
-    min: 10,
+    min: 3,
     info: {
       key: 'master',
       name: '人类观察大师',
@@ -44,7 +48,7 @@ const TITLES: ReadonlyArray<{ min: number; info: TitleInfo }> = [
     },
   },
   {
-    min: 8,
+    min: 2,
     info: {
       key: 'detective',
       name: 'AI 鉴定师',
@@ -54,17 +58,7 @@ const TITLES: ReadonlyArray<{ min: number; info: TitleInfo }> = [
     },
   },
   {
-    min: 6,
-    info: {
-      key: 'scout',
-      name: 'AI 侦察员',
-      emoji: '🔍',
-      comment: '细节逃不过你的侦察，再练练就能看穿 AI 的伪装啦。',
-      gradient: 'from-cyan-300 via-sky-400 to-blue-400',
-    },
-  },
-  {
-    min: 3,
+    min: 1,
     info: {
       key: 'observer',
       name: 'AI 观察员',
