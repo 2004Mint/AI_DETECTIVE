@@ -10,6 +10,7 @@
 import { computed, ref, watch } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import DreamShell from '@/components/dream/DreamShell.vue'
+import BackToStudio from '@/components/dream/BackToStudio.vue'
 import WorkCover from '@/components/dream/WorkCover.vue'
 import CategoryBadge from '@/components/dream/CategoryBadge.vue'
 import MusicPlayer from '@/components/dream/MusicPlayer.vue'
@@ -41,12 +42,6 @@ function goWork(id: string) {
   void router.push(`/dream-studio/work/${id}`)
 }
 
-function goBack() {
-  // 直接从二维码/分享链接进来时没有上一页，回画廊兜底
-  if (window.history.length > 1) router.back()
-  else void router.push('/dream-studio')
-}
-
 watch(
   work,
   (value) => {
@@ -60,7 +55,7 @@ watch(
   <DreamShell>
     <template v-if="work && category">
       <div class="pt-5">
-        <button type="button" class="dream-link" @click="goBack">返回画廊</button>
+        <BackToStudio />
       </div>
 
       <article class="mx-auto mt-4 max-w-2xl">
@@ -142,7 +137,7 @@ watch(
       title="没有找到这件作品"
       hint="链接可能已经过期，或者作品已经撤展。"
     >
-      <RouterLink to="/dream-studio" class="dream-btn dream-btn-quiet mt-3">回到画廊</RouterLink>
+      <RouterLink to="/dream-studio" class="dream-btn dream-btn-quiet mt-3">回到造梦事务所</RouterLink>
     </EmptyState>
   </DreamShell>
 </template>

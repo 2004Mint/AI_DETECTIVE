@@ -7,9 +7,10 @@
  * 分类栏在这里改成「换分类就换页面」，其余体验和首页一致。
  */
 import { computed } from 'vue'
-import { RouterLink, useRoute, useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { LayoutGrid } from 'lucide-vue-next'
 import DreamShell from '@/components/dream/DreamShell.vue'
+import BackToStudio from '@/components/dream/BackToStudio.vue'
 import CategoryRail from '@/components/dream/CategoryRail.vue'
 import WorkGallery from '@/components/dream/WorkGallery.vue'
 import EmptyState from '@/components/dream/EmptyState.vue'
@@ -44,7 +45,7 @@ function goTo(key: DreamCategoryFilter) {
 <template>
   <DreamShell>
     <div class="pt-5">
-      <RouterLink to="/dream-studio" class="dream-link">返回画廊</RouterLink>
+      <BackToStudio />
     </div>
 
     <template v-if="notFound">
