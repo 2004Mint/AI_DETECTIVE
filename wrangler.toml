@@ -1,0 +1,9 @@
+# Cloudflare Worker：AI 造梦事务所共享计票
+name = "dream-vote"
+main = "workers/vote-worker.js"
+compatibility_date = "2026-01-01"
+
+# 先执行 `wrangler kv namespace create VOTES`，把返回的 id 填进来
+[[kv_namespaces]]
+binding = "VOTES"
+id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"

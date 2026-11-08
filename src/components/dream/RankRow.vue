@@ -2,8 +2,8 @@
 /**
  * AI 造梦事务所 · 排行榜行
  *
- * 一行只放：排名、缩略图、作品名、分类、票数。
- * 前三名用稍大的缩略图和颜色区分，不做大型卡片。
+ * 一行放：排名、缩略图、作品名、分类 / 已投标记、票数、占比条。
+ * 前三名用稍大的缩略图和名次颜色区分，不做大型卡片。
  */
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
@@ -15,6 +15,10 @@ const props = defineProps<{
   item: RankedWork
   /** 前三名：略微放大 */
   top?: boolean
+  /** 相对第一名的占比（0-100），用于底部细条 */
+  percent?: number
+  /** 这台设备是否给这件作品投过票 */
+  voted?: boolean
 }>()
 
 const category = computed(() => dreamCategoryOf(props.item.work.category))
@@ -55,9 +59,28 @@ const rankTone = computed(() => {
       >
         {{ item.work.title }}
       </p>
-      <p class="mt-0.5 text-[10px] text-slate-500">{{ category?.short ?? '未分类' }}</p>
+
+      <p class="mt-0.5 flex items-center gap-1.5 text-[10px] text-slate-500">
+        <span>{{ category?.short ?? '未分类' }}</span>
+        <span
+          v-if="voted"
+          class="rounded-full bg-brand/15 px-1.5 py-px text-[9px] font-medium text-brand-light"
+        >
+          已投
+        </span>
+      </p>
+
+      <!-- 相对第一名的占比条 -->
+      <div :class="item.votes > 0 ? 'bg-white/[0.06]' : 'bg-transparent'"
+          class="mt-1.5 h-[3px] w-full overflow-hidden rounded-full"
+          aria-hidden="true">
+        <div
+          class="h-full rounded-full bg-gradient-to-r from-brand/60 to-brand transition-[width] duration-500"
+          :style="{ width: `${Math.max(percent ?? 0, item.votes > 0 ? 4 : 0)}%` }"
+        />
+      </div>
     </div>
 
-    <span class="shrink-0 text-[11px] tabular-nums text-slate-400">{{ item.votes }}</span>
+    <span class="shrink-0 self-start text-[11px] tabular-nums text-slate-400">{{ item.votes }}</span>
   </RouterLink>
 </template>

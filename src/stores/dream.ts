@@ -14,9 +14,14 @@ import type { DreamMessage, DreamMessageStatus, DreamSubmitResult } from '@/type
 import { validateMessage } from '@/utils/dream'
 import type { MessageDraft } from '@/utils/dream'
 import { readDreamSnapshot, writeDreamSnapshot } from '@/utils/dreamStorage'
+import { fetchVoteTotals, hasRemoteVotes, sendVote } from '@/utils/voteApi'
+import type { VoteTotals } from '@/utils/voteApi'
 
 /** 留言最多保留条数（与存储层保持一致） */
 const MAX_MESSAGES = 200
+
+/** 投票结果：offline 表示后端没连上，先记在本机 */
+export type VoteResult = 'ok' | 'already' | 'invalid' | 'offline'
 
 export interface MessageInput extends MessageDraft {
   /** 关联作品 id（详情页留言时带上） */
@@ -32,6 +37,46 @@ export const useDreamStore = defineStore('dream', () => {
   const votes = ref<Record<string, number>>({ ...snapshot.votes })
   /** 本机留言，新的在前 */
   const messages = ref<DreamMessage[]>([...snapshot.messages])
+
+  /* ---------------- 共享票数（可选后端） ---------------- */
+
+  /** 是否配置了共享后端（VITE_VOTE_API） */
+  const remoteEnabled = hasRemoteVotes()
+  /** 全站票数：作品 id → 票数 */
+  const remoteCounts = ref<Record<string, number>>({})
+  /** off=未接入 / idle=待拉取 / loading / ok / error */
+  const remoteState = ref<'off' | 'idle' | 'loading' | 'ok' | 'error'>(
+    remoteEnabled ? 'idle' : 'off',
+  )
+
+  function applyRemote(totals: VoteTotals): void {
+    remoteCounts.value = totals.counts
+    remoteState.value = 'ok'
+  }
+
+  /** 拉一次全站票数（进入人气榜 / 投票成功后调用） */
+  async function syncVotes(): Promise<void> {
+    if (!remoteEnabled) return
+    remoteState.value = 'loading'
+    try {
+      applyRemote(await fetchVoteTotals())
+    } catch {
+      remoteState.value = 'error'
+    }
+  }
+
+  /**
+   * 页面显示用的票数：
+   * 后端可用时用全站数据，否则退回本机数据（初始票仍来自 works.ts 的 voteCount）。
+   */
+  const displayVotes = computed<Record<string, number>>(() =>
+    remoteState.value === 'ok' ? remoteCounts.value : votes.value,
+  )
+
+  /** 后端累计总票数 */
+  const remoteTotal = computed(() =>
+    Object.values(remoteCounts.value).reduce((sum, count) => sum + count, 0),
+  )
 
   /* ---------------- getters ---------------- */
 
@@ -60,15 +105,26 @@ export const useDreamStore = defineStore('dream', () => {
   }
 
   /**
-   * 投票。每台设备对同一件作品只能投一次。
-   * @returns 'ok' 投票成功；'already' 已经投过；'invalid' 参数不合法
+   * 投票。
+   * - 未接后端：每台设备每件作品 1 票，只记本机；
+   * - 接了后端：先本地记下防连点，再提交服务端；服务端失败则退回本机并返回 'offline'。
    */
-  function vote(workId: string): 'ok' | 'already' | 'invalid' {
+  async function vote(workId: string): Promise<VoteResult> {
     if (!workId) return 'invalid'
     if (hasVoted(workId)) return 'already'
+
     votes.value = { ...votes.value, [workId]: 1 }
     persist()
-    return 'ok'
+
+    if (!remoteEnabled) return 'ok'
+
+    try {
+      applyRemote(await sendVote(workId))
+      return 'ok'
+    } catch {
+      remoteState.value = 'error'
+      return 'offline'
+    }
   }
 
   /** 提交留言：校验 → 存本机 → 状态默认「待审核」 */
@@ -122,6 +178,11 @@ export const useDreamStore = defineStore('dream', () => {
   return {
     votes,
     messages,
+    displayVotes,
+    remoteEnabled,
+    remoteState,
+    remoteTotal,
+    syncVotes,
     localVoteCount,
     messageCount,
     hasVoted,

@@ -15,7 +15,7 @@ const props = defineProps<{ work: DreamWork }>()
 
 const store = useDreamStore()
 const voted = computed(() => store.hasVoted(props.work.id))
-const votes = computed(() => voteTotal(props.work, store.votes))
+const votes = computed(() => voteTotal(props.work, store.displayVotes))
 
 const notice = ref('')
 let noticeTimer: number | undefined
@@ -28,10 +28,11 @@ function flash(text: string) {
   }, 2400)
 }
 
-function onVote() {
-  const result = store.vote(props.work.id)
+async function onVote() {
+  const result = await store.vote(props.work.id)
   if (result === 'ok') flash('已记录你的投票')
   else if (result === 'already') flash('这件作品已经投过票了')
+  else if (result === 'offline') flash('网络不稳，先记在本机了')
 }
 
 onBeforeUnmount(() => {
