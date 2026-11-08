@@ -9,7 +9,7 @@
  * 不使用彩色渐变占位卡来冒充作品。
  */
 import { computed, ref } from 'vue'
-import { Image as ImageIcon } from 'lucide-vue-next'
+import { Image as ImageIcon, Music } from 'lucide-vue-next'
 import { dreamCover } from '@/utils/dream'
 import type { DreamWork } from '@/types/dream'
 
@@ -25,6 +25,10 @@ const props = withDefaults(
 )
 
 const src = computed(() => dreamCover(props.work))
+/** 音乐作品没有封面时用音符，文案也不叫「作品图片」——音乐的主角是音频 */
+const isMusic = computed(() => props.work.category === 'music')
+const placeholderIcon = computed(() => (isMusic.value ? Music : ImageIcon))
+const placeholderText = computed(() => (isMusic.value ? '封面待补充' : '待补充作品图片'))
 const loaded = ref(false)
 const failed = ref(false)
 </script>
@@ -45,7 +49,7 @@ const failed = ref(false)
       @error="failed = true"
     />
     <div v-else class="absolute inset-0 grid place-items-center text-slate-600">
-      <ImageIcon :size="12" aria-hidden="true" />
+      <component :is="placeholderIcon" :size="12" aria-hidden="true" />
     </div>
   </div>
 
@@ -69,8 +73,8 @@ const failed = ref(false)
       v-if="!src || failed"
       class="flex min-h-[150px] w-full flex-col items-center justify-center gap-1.5 px-4 py-10 text-center"
     >
-      <ImageIcon :size="15" class="text-slate-600" aria-hidden="true" />
-      <p class="text-[9px] tracking-wide text-slate-500">待补充作品图片</p>
+      <component :is="placeholderIcon" :size="15" class="text-slate-600" aria-hidden="true" />
+      <p class="text-[9px] tracking-wide text-slate-500">{{ placeholderText }}</p>
     </div>
     <div v-else-if="!loaded" class="absolute inset-0 animate-pulse bg-white/5" aria-hidden="true" />
   </div>
