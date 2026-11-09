@@ -11,3 +11,4 @@ dist-scf/
 server/scf/node_modules/
 server/scf/package-lock.json
 .tencent-keys.txt
+poster/out/
